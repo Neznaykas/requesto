@@ -2,14 +2,21 @@
 
 namespace Drom;
 
-abstract class Client
+/*interface IClient
+{
+    public static function request($class);
+    public function setHeaders($array);
+    public function setData($array);
+    public function run($url);
+}*/
+
+abstract class Client //implements IClient
 {
    protected $client;
 
    public static function request($class)
    {
       $class = __NAMESPACE__ . '\\'. $class;
-
       return new $class();
    }
 

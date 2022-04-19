@@ -1,5 +1,7 @@
 <?php
 
+include_once '../bootstrap.php';
+
 use PHPUnit\Framework\TestCase;
 use Drom\Client;
 
@@ -13,12 +15,19 @@ class ClientTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->get = $this->getMockBuilder(GET::class)
+        $this->client = $this->getMockBuilder(Client::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->client = Client::request($this->get);
+        //$this->client->request("GET");
     }
+
+  /*  public function testProcess() 
+    {
+        $mock = $this->createMock('GET');
+        // проверяем, что в $mock находится экземпляр класса Client
+        $this->assertInstanceOf(GET::class, $mock);
+    }*/
 
     public function testGetEmpty() 
     {    
