@@ -2,8 +2,6 @@
 
 declare(strict_types=1);
 
-use SebastianBergmann\CodeCoverage\Report\PHP;
-
 include_once 'vendor/autoload.php';
 include_once 'client/Controller.php';
 
