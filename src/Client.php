@@ -1,6 +1,6 @@
 <?php
 
-include_once  'Request.php';
+namespace Drom;
 
 abstract class Client
 {
@@ -8,6 +8,8 @@ abstract class Client
 
    public static function request($class)
    {
+      $class = __NAMESPACE__ . '\\'. $class;
+
       return new $class();
    }
 

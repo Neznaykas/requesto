@@ -1,5 +1,7 @@
 <?php
 
+namespace Drom;
+
 interface HttpRequest
 {
     public function setOption($name, $value);

@@ -1,9 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-
-include_once 'client/Controller.php';
-include_once 'client/Request.php';
+use Drom\Client;
 
 const BASE_URL = 'https://dummyapi.io/data/v1/';
 const COMMENTS_URL = 'comment/';

@@ -1,9 +1,9 @@
 <?php
 
 declare(strict_types=1);
+include_once '../bootstrap.php';
 
-include_once 'vendor/autoload.php';
-include_once 'client/Controller.php';
+use Drom\Client;
 
 //Examples
 const BASE_URL = 'https://dummyapi.io/data/v1/';
