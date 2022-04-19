@@ -16,7 +16,7 @@ const PUT_USER = 'user/60d0fe4f5311236168a109ca';
 echo Client::request('GET')
             ->setHeaders(array('app-id: ' . APP_ID_VALUE))
             ->setData(array('tst' => 'qwest'))
-            ->run(BASE_URL . GET_USERS) . PHP_EOL; //PHP_EOL - только из-за того норм смотрелось в консоли
+            ->run(BASE_URL . GET_USERS) . PHP_EOL; //PHP_EOL - только чтобы норм смотрелось в консоли
 
 $params = array(
     'message' => 'qwest',
