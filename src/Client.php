@@ -2,108 +2,41 @@
 
 namespace Drom;
 
-/*interface IClient
+/*use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\UriInterface;
+
+interface RequestFactoryInterface
 {
-    public static function request($class);
-    public function setHeaders($array);
-    public function setData($array);
-    public function run($url);
-}*/
+    /**
+     * Create a new request.
+     *
+     * @param string $method The HTTP method associated with the request.
+     * @param UriInterface|string $uri The URI associated with the request. 
+     */
+    //public function createRequest(string $method, $uri): RequestInterface;
+//}
 
-abstract class Client //implements IClient
+class Client //Facade
 {
-   protected $client;
+    public function __construct()
+    {
+        //$this->client = new AbstractHttpMethod();
+    }
 
-   public static function request($class)
-   {
-      $class = __NAMESPACE__ . '\\'. $class;
-      return new $class();
-   }
+    public static function get()
+    {
+        return AbstractHttpMethod::request('GET');;
+    }
 
-   public function setHeaders($array)
-   {  
-      $this->client->setOption(CURLOPT_HTTPHEADER, $array);
-      return $this;
-   }
+    public static function post()
+    {
+        return AbstractHttpMethod::request('POST');
+    }
 
-   abstract public function setData($array);
-   abstract public function run($url);
-}
-
-class GET extends Client
-{
-   private $params;
-
-   function __construct()
-   {
-	  $this->client = new Request(); 
-
-     $this->client->setOption(CURLOPT_RETURNTRANSFER, true);
-     $this->client->setOption(CURLOPT_SSL_VERIFYPEER, false);
-     $this->client->setOption(CURLOPT_HEADER, false);
-   }
-
-   function setData($array)
-   {  
-      $this->params = http_build_query($array);
-      return $this;
-   }
-
-   function run($url)
-   {  
-      $this->client->setOption(CURLOPT_URL, $url . '?' . $this->params); 
-	   return $this->client->execute();
-   }
-}
-
-class POST extends Client
-{
-   function __construct()
-   {
-	  $this->client = new Request();
-
-     $this->client->setOption(CURLOPT_POST, true); 
-     $this->client->setOption(CURLOPT_RETURNTRANSFER, true);
-     $this->client->setOption(CURLOPT_SSL_VERIFYPEER, false);
-     $this->client->setOption(CURLOPT_HEADER, false);
-   }
-
-   function setData($array)
-   {  
-      $this->client->setOption(CURLOPT_POSTFIELDS, http_build_query($array, '', '&')); 
-      return $this;
-   }
-
-   function run($url)
-   {  
-      $this->client->setOption(CURLOPT_URL, $url); 
-	   return $this->client->execute();
-   }
-}
-
-class PUT extends Client
-{
-   function __construct()
-   {
-	  $this->client = new Request();
-
-     $this->client->setOption(CURLOPT_CUSTOMREQUEST, 'PUT'); 
-     $this->client->setOption(CURLOPT_RETURNTRANSFER, true);
-     $this->client->setOption(CURLOPT_SSL_VERIFYPEER, false);
-     $this->client->setOption(CURLOPT_HEADER, false);
-   }
-
-   function setData($array)
-   {  
-      $this->client->setOption(CURLOPT_POSTFIELDS, http_build_query($array));
-      return $this; 
-   }
-
-   function run($url)
-   {  
-      $this->client->setOption(CURLOPT_URL, $url); 
-	   return $this->client->execute();
-   }
+    public static function put()
+    {
+        return AbstractHttpMethod::request('PUT');
+    }
 }
 
 ?>

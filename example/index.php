@@ -13,7 +13,7 @@ const POST_COMMENT_CREATE = 'comment/create';
 const GET_USERS = 'user';
 const PUT_USER = 'user/60d0fe4f5311236168a109ca';
 
-echo Client::request('GET')
+echo Client::get()
             ->setHeaders(array('app-id: ' . APP_ID_VALUE))
             ->setData(array('tst' => 'qwest'))
             ->run(BASE_URL . GET_USERS) . PHP_EOL; //PHP_EOL - только чтобы норм смотрелось в консоли
@@ -24,12 +24,12 @@ $params = array(
     'post' => '60d21b7967d0d8992e610d1b'
 );
 
-echo Client::request('POST')
+echo Client::post()
             ->setHeaders(array('app-id: ' . APP_ID_VALUE))
             ->setData($params)
             ->run(BASE_URL . POST_COMMENT_CREATE) . PHP_EOL;
 
-$response = Client::request('PUT')
+$response = Client::put()
             ->setHeaders(array('app-id: ' . APP_ID_VALUE))
             ->setData(
                 array('firstName' => 'qwest')

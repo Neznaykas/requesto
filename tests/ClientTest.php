@@ -1,6 +1,6 @@
 <?php
 
-include_once '../bootstrap.php';
+include_once 'bootstrap.php';
 
 use PHPUnit\Framework\TestCase;
 use Drom\Client;
@@ -22,12 +22,12 @@ class ClientTest extends TestCase
         //$this->client->request("GET");
     }
 
-  /*  public function testProcess() 
+    public function testProcess() 
     {
         $mock = $this->createMock('GET');
         // проверяем, что в $mock находится экземпляр класса Client
         $this->assertInstanceOf(GET::class, $mock);
-    }*/
+    }
 
     public function testGetEmpty() 
     {    

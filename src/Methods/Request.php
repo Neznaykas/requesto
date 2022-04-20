@@ -1,6 +1,6 @@
 <?php
 
-namespace Drom;
+namespace Drom\Methods;
 
 interface HttpRequest
 {
