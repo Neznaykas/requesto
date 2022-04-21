@@ -2,8 +2,6 @@
 
 namespace Drom\Methods;
 
-use Drom\AbstractHttpMethod;
-
 class POST extends AbstractHttpMethod
 {
    function __construct()
@@ -16,13 +14,13 @@ class POST extends AbstractHttpMethod
      $this->client->setOption(CURLOPT_HEADER, false);
    }
 
-   function setData($array)
+   function setData(array $params)
    {  
-      $this->client->setOption(CURLOPT_POSTFIELDS, http_build_query($array, '', '&')); 
+      $this->client->setOption(CURLOPT_POSTFIELDS, http_build_query($params, '', '&')); 
       return $this;
    }
 
-   function run($url)
+   function run(string $url)
    {  
       $this->client->setOption(CURLOPT_URL, $url); 
 	   return $this->client->execute();

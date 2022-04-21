@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types=1);
 include_once '../bootstrap.php';
 
 use Drom\Client;
@@ -9,14 +8,13 @@ use Drom\Client;
 const BASE_URL = 'https://dummyapi.io/data/v1/';
 const APP_ID_VALUE = '617b11efbdaa719034cf6d83';
 
-const POST_COMMENT_CREATE = 'comment/create';
-const GET_USERS = 'user';
-const PUT_USER = 'user/60d0fe4f5311236168a109ca';
+const POST_COMMENT_CREATE = BASE_URL . 'comment/create';
+const GET_USERS = BASE_URL . 'user';
+const PUT_USER = BASE_URL . 'user/60d0fe4f5311236168a109ca';
 
-echo Client::get()
-            ->setHeaders(array('app-id: ' . APP_ID_VALUE))
-            ->setData(array('tst' => 'qwest'))
-            ->run(BASE_URL . GET_USERS) . PHP_EOL; //PHP_EOL - только чтобы норм смотрелось в консоли
+echo Client::get(GET_USERS, ['app-id: ' . APP_ID_VALUE], ['tst' => 'qwest']);
+
+echo PHP_EOL;
 
 $params = array(
     'message' => 'qwest',
@@ -24,15 +22,8 @@ $params = array(
     'post' => '60d21b7967d0d8992e610d1b'
 );
 
-echo Client::post()
-            ->setHeaders(array('app-id: ' . APP_ID_VALUE))
-            ->setData($params)
-            ->run(BASE_URL . POST_COMMENT_CREATE) . PHP_EOL;
+echo Client::post(POST_COMMENT_CREATE, ['app-id: ' . APP_ID_VALUE], $params);
 
-$response = Client::put()
-            ->setHeaders(array('app-id: ' . APP_ID_VALUE))
-            ->setData(
-                array('firstName' => 'qwest')
-            );
+echo PHP_EOL;
 
-echo $response->run(BASE_URL . PUT_USER);
+echo Client::put(PUT_USER, ['app-id: ' . APP_ID_VALUE], ['firstName' => 'qwest']);

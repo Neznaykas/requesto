@@ -2,40 +2,46 @@
 
 namespace Drom;
 
-/*use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\UriInterface;
+use Drom\Methods\AbstractHttpMethod;
 
-interface RequestFactoryInterface
+interface ClientInterface
 {
     /**
-     * Create a new request.
-     *
-     * @param string $method The HTTP method associated with the request.
-     * @param UriInterface|string $uri The URI associated with the request. 
+     * Create a new client.
+     * @param string $url - Url request
+     * @param array $headers - Headers
+     * @param array $data - Message body
      */
-    //public function createRequest(string $method, $uri): RequestInterface;
-//}
 
-class Client //Facade
+    public static function get(string $url, array $headers = [], array $data = []): string;
+    public static function post(string $url, $headers = [], $data = []): string;
+    public static function put(string $url, $headers = [], $data = []): string;
+}
+
+class Client implements ClientInterface
 {
-    public function __construct()
+    public static function get(string $url, array $headers = [], array $data = []): string
     {
-        //$this->client = new AbstractHttpMethod();
+        return AbstractHttpMethod::request('GET')
+            ->setHeaders($headers)
+            ->setData($data)
+            ->run($url);
     }
 
-    public static function get()
+    public static function post(string $url, $headers = [], $data = []): string
     {
-        return AbstractHttpMethod::request('GET');;
+        return AbstractHttpMethod::request('POST')
+            ->setHeaders($headers)
+            ->setData($data)
+            ->run($url);
     }
 
-    public static function post()
+    public static function put(string $url, $headers = [], $data = []): string
     {
-        return AbstractHttpMethod::request('POST');
-    }
-
-    public static function put()
-    {
-        return AbstractHttpMethod::request('PUT');
+        return AbstractHttpMethod::request('PUT')
+            ->setHeaders($headers)
+            ->setData($data)
+            ->run($url);
     }
 }
 

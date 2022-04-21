@@ -3,6 +3,7 @@
 include_once 'bootstrap.php';
 
 use PHPUnit\Framework\TestCase;
+
 use Drom\Client;
 
 const BASE_URL = 'https://dummyapi.io/data/v1/';
@@ -18,15 +19,15 @@ class ClientTest extends TestCase
         $this->client = $this->getMockBuilder(Client::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        //$this->client->request("GET");
     }
-
+    /**
+     * @expectedException InvalidArgumentException
+     */
     public function testProcess() 
     {
-        $mock = $this->createMock('GET');
+        $mock = $this->createMock('Client');
         // проверяем, что в $mock находится экземпляр класса Client
-        $this->assertInstanceOf(GET::class, $mock);
+        $this->assertInstanceOf(Client::class, $mock);
     }
 
     public function testGetEmpty() 
@@ -39,13 +40,15 @@ class ClientTest extends TestCase
 
     public function testGet() 
     {
-        $http = $this->createMock('GET');
-        $http->expects($this->any())
-              ->method('run')
-              ->will($this->returnValue('not JSON'));
+        $client = $this->createMock('Client');
         
-            $response = Client::request($http);
-            $this->assertEmpty($response->run('https://drom.ru'));
+        $client->expects($this->any())
+              ->method('get')
+              ->will($this->returnValue('not JSON'));
+
+        $response = Client::get('https://drom.ru');
+
+        $this->assertEmpty($client->get('https://drom.ru'));
     }
     
     //$this->expectException('HttpResponseException');

@@ -2,8 +2,6 @@
 
 namespace Drom\Methods;
 
-use Drom\AbstractHttpMethod;
-
 class GET extends AbstractHttpMethod
 {
    private $params;
@@ -17,13 +15,13 @@ class GET extends AbstractHttpMethod
      $this->client->setOption(CURLOPT_HEADER, false);
    }
 
-   function setData($array)
+   function setData(array $params)
    {  
-      $this->params = http_build_query($array);
+      $this->params = http_build_query($params);
       return $this;
    }
 
-   function run($url)
+   function run(string $url)
    {  
       $this->client->setOption(CURLOPT_URL, $url . '?' . $this->params); 
 	   return $this->client->execute();
