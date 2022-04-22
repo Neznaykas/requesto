@@ -25,7 +25,7 @@ class Request implements HttpRequest
         return curl_setopt($this->handle, $name, $value);
     }
 
-    public function getInfo(int $name): mixed 
+    public function getInfo(int $name) 
     {
         return curl_getinfo($this->handle, $name);
     }

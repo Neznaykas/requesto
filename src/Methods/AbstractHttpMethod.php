@@ -20,6 +20,11 @@ abstract class AbstractHttpMethod
       return $this;
    }
 
+   public function getStatusCode(): int
+   {
+      return $this->client->getInfo(CURLINFO_RESPONSE_CODE);
+   }
+
    abstract public function setData(array $data);
    abstract public function run(string $url);
 }

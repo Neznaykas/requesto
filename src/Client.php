@@ -20,9 +20,13 @@ interface ClientInterface
 
 class Client implements ClientInterface
 {
+    private static $method;
+
     public static function get(string $url, array $headers = [], array $data = []): string
     {
-        return AbstractHttpMethod::request('GET')
+        self::$method = AbstractHttpMethod::request('GET');
+
+        return self::$method
             ->setHeaders($headers)
             ->setData($data)
             ->run($url);
@@ -30,7 +34,9 @@ class Client implements ClientInterface
 
     public static function post(string $url, $headers = [], $data = []): string
     {
-        return AbstractHttpMethod::request('POST')
+        self::$method =  AbstractHttpMethod::request('POST');
+        
+        return self::$method
             ->setHeaders($headers)
             ->setData($data)
             ->run($url);
@@ -38,10 +44,17 @@ class Client implements ClientInterface
 
     public static function put(string $url, $headers = [], $data = []): string
     {
-        return AbstractHttpMethod::request('PUT')
+        self::$method =  AbstractHttpMethod::request('put');
+        
+        return self::$method
             ->setHeaders($headers)
             ->setData($data)
             ->run($url);
+    }
+
+    public static function getStatusCode(): int
+    {
+        return self::$method->getStatusCode();
     }
 }
 

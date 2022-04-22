@@ -13,8 +13,9 @@ const GET_USERS = BASE_URL . 'user';
 const PUT_USER = BASE_URL . 'user/60d0fe4f5311236168a109ca';
 
 echo Client::get(GET_USERS, ['app-id: ' . APP_ID_VALUE], ['tst' => 'qwest']);
-
 echo PHP_EOL;
+
+echo 'Status:' . Client::getStatusCode() . PHP_EOL;
 
 $params = array(
     'message' => 'qwest',
