@@ -44,7 +44,7 @@ class Client implements ClientInterface
 
     public static function put(string $url, $headers = [], $data = []): string
     {
-        self::$method =  AbstractHttpMethod::request('put');
+        self::$method = AbstractHttpMethod::request('PUT');
         
         return self::$method
             ->setHeaders($headers)
@@ -52,10 +52,21 @@ class Client implements ClientInterface
             ->run($url);
     }
 
+    /*public static function setData($data)
+    {
+        return self::$method->setData($data);
+    }
+
+    public static function setHeaders($headers)
+    {
+        return self::$method->setHeaders($headers);
+    }*/
+
     public static function getStatusCode(): int
     {
         return self::$method->getStatusCode();
     }
+
 }
 
 ?>
