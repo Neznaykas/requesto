@@ -57,12 +57,6 @@ class ClientAPITest extends TestCase
 
     public function testPostWithoutParams()
     {
-        $params = [
-            'message' => 'qwest',
-            'owner' => '60d0fe4f5311236168a109d0',
-            'post' => '60d21b7967d0d8992e610d1b'
-        ];
-
         $response = $this->client->post(POST_COMMENT, ['app-id: ' . APP_ID]);
         //400 Bad Request
         $this->assertEquals(400, $this->client->getStatusCode());

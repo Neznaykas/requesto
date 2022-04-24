@@ -20,5 +20,8 @@
     "require-dev": {
         "psr/http-message": "^1.0",
         "phpunit/phpunit": "^9"
+    },
+    "scripts": {
+        "test": "phpunit tests --colors=always"
     }
 }

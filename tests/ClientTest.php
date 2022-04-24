@@ -3,17 +3,10 @@
 use PHPUnit\Framework\TestCase;
 use Drom\Client;
 
+
 class ClientTest extends TestCase
 {
     private $client;
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    /*public function testException()
-    {
-        $this->expectException(InvalidArgumentException::class);
-    }*/
 
     public function setUp(): void
     {
@@ -22,6 +15,18 @@ class ClientTest extends TestCase
 
     public function tearDown(): void {
         $this->client = null;
+    }
+
+    public function testGet()
+    {
+        $client = $this->getMockBuilder(Client::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $client->method('get')
+            ->willReturn('{"error":"APP_ID_MISSING"}');
+
+        $this->assertSame('{"error":"APP_ID_MISSING"}', $client->get(BASE_URL));
     }
 
     public function testProcess() 

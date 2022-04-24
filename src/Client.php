@@ -12,59 +12,50 @@ interface ClientInterface
      * @param array $headers - Headers
      * @param array $data - Message body
      */
-
-    public static function get(string $url, array $headers = [], array $data = []): string;
-    public static function post(string $url, $headers = [], $data = []): string;
-    public static function put(string $url, $headers = [], $data = []): string;
+    
+    public function get(string $url, array $headers = [], array $data = []): string;
+    public function post(string $url, $headers = [], $data = []): string;
+    public function put(string $url, $headers = [], $data = []): string;
+    public function getStatusCode(): int;
 }
 
 class Client implements ClientInterface
 {
-    private static $method;
+    private AbstractHttpMethod $method; 
 
-    public static function get(string $url, array $headers = [], array $data = []): string
+    public function get(string $url, array $headers = [], array $data = []): string
     {
-        self::$method = AbstractHttpMethod::request('GET');
+        $this->method = AbstractHttpMethod::request('GET');
 
-        return self::$method
+        return $this->method
             ->setHeaders($headers)
             ->setData($data)
             ->run($url);
     }
 
-    public static function post(string $url, $headers = [], $data = []): string
+    public function post(string $url, $headers = [], $data = []): string
     {
-        self::$method =  AbstractHttpMethod::request('POST');
+        $this->method =  AbstractHttpMethod::request('POST');
         
-        return self::$method
+        return $this->method
             ->setHeaders($headers)
             ->setData($data)
             ->run($url);
     }
 
-    public static function put(string $url, $headers = [], $data = []): string
+    public function put(string $url, $headers = [], $data = []): string
     {
-        self::$method = AbstractHttpMethod::request('PUT');
+        $this->method = AbstractHttpMethod::request('PUT');
         
-        return self::$method
+        return $this->method
             ->setHeaders($headers)
             ->setData($data)
             ->run($url);
     }
 
-    /*public static function setData($data)
+    public function getStatusCode(): int
     {
-        return self::$method->setData($data);
-    }
-
-    public static function setHeaders($headers)
-    {
-        return self::$method->setHeaders($headers);
-    }*/
-
-    public static function getStatusCode(): int
-    {
-        return self::$method->getStatusCode();
+        return $this->method->getStatusCode();
     }
 
 }
