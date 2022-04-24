@@ -4,7 +4,7 @@ namespace Drom\Methods;
 
 class GET extends AbstractHttpMethod
 {
-   private $params;
+   private string $params;
 
    function __construct()
    {

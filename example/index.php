@@ -27,6 +27,7 @@ $params = array(
 );
 
 echo $client->post(POST_COMMENT, ['app-id: ' . APP_ID_VALUE], $params);
+echo PHP_EOL;
 echo 'Status:' . $client->getStatusCode() . PHP_EOL;
 
 echo PHP_EOL;
