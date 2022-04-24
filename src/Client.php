@@ -13,32 +13,33 @@ interface ClientInterface
      * @param array $data - Message body
      */
     
-    public function get(string $url, array $headers = [], array $data = []): string;
-    public function post(string $url, $headers = [], $data = []): string;
-    public function put(string $url, $headers = [], $data = []): string;
+    public function get(string $url, array $data = []): string;
+    public function post(string $url, $data = []): string;
+    public function put(string $url, $data = []): string;
     public function getStatusCode(): int;
 }
 
 class Client implements ClientInterface
 {
-    private AbstractHttpMethod $method; 
+    private AbstractHttpMethod $method;
+    private array $headers = []; 
 
-    public function get(string $url, array $headers = [], array $data = []): string
+    public function get(string $url, array $data = []): string
     {
         $this->method = AbstractHttpMethod::request('GET');
 
         return $this->method
-            ->setHeaders($headers)
+            ->setHeaders($this->headers)
             ->setData($data)
             ->run($url);
     }
 
-    public function post(string $url, $headers = [], $data = []): string
+    public function post(string $url, $data = []): string
     {
         $this->method =  AbstractHttpMethod::request('POST');
         
         return $this->method
-            ->setHeaders($headers)
+            ->setHeaders($this->headers)
             ->setData($data)
             ->run($url);
     }
@@ -48,9 +49,16 @@ class Client implements ClientInterface
         $this->method = AbstractHttpMethod::request('PUT');
         
         return $this->method
-            ->setHeaders($headers)
+            ->setHeaders($this->headers)
             ->setData($data)
             ->run($url);
+    }
+
+    public function withHeaders(array $headers)
+    {
+        //$this->method->setHeaders($headers);
+        $this->headers = $headers;
+        return $this;
     }
 
     public function getStatusCode(): int
