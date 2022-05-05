@@ -4,18 +4,7 @@ namespace Drom;
 
 use Drom\Http\HttpMethod;
 
-class Comment
-{
-    private $id;
-    private $name;
-}
-
-class Coomments extends Comment
-{
-    public array $commends;
-}
-
-class ExampleApi //implements ClientInterface
+class ExampleApi
 {
     private HttpMethod $method;
 

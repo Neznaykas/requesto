@@ -44,7 +44,9 @@ class HttpMethod implements HInterface
 
    public function get(string $url): string
    {
-      $this->params = http_build_query($this->params);
+      if ($this->params !== null)
+         $this->params = http_build_query($this->params);
+
       $this->client->setOption(CURLOPT_URL, $url . '?' . $this->params);
       
 	   return $this->client->execute();
