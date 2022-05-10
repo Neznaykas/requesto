@@ -2,7 +2,7 @@
 
 class Coomments extends Comment
 {
-    public array $commends;
+    public array $comments;
 }
 
 ?>
