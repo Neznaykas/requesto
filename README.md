@@ -1,7 +1,7 @@
-# Проба пера
+<h3># Проба пера </h3>
 
-# docker build -t test_app .
-# docker run -it --rm --name drop_app
+docker build -t test_app . <br>
+docker run -it --rm --name test_app
 
-# composer install - Generate autoload
-# composer test - PHPUnit tests
+composer install - Generate autoload <br>
+composer test - PHPUnit tests
