@@ -1,12 +1,18 @@
 <?php
 
-require_once '..\vendor\autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use Drom\ExampleApi;
 
+echo '<h4>Client Example</h4>';
+
 $client = new ExampleApi();
 
+echo '<p>Get Comments</p>';
+
 echo $client->getComments();
+
+echo '<p>Add Comment</p>';
 
 $params = array(
     'message' => 'qwest',
@@ -14,12 +20,8 @@ $params = array(
     'post' => '60d21b7967d0d8992e610d1b'
 );
 
-echo PHP_EOL;
-echo PHP_EOL;
-
 echo $client->addComment($params);
 
-echo PHP_EOL;
-echo PHP_EOL;
+echo '<p>Update Comment</p>';
 
 echo $client->updateComment(['firstName' => 'qwest']);
