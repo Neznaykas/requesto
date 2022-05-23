@@ -19,7 +19,7 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        image: test_app2
+        image: test_app
         container_name: myapp
         restart: always
         volumes:
@@ -27,7 +27,6 @@ services:
         networks:
             - backend
         tty: true
-
 
 networks:
     backend:
