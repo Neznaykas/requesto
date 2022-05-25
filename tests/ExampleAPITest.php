@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use Drom\ExampleApi;
 
-class ClientAPITest extends TestCase
+class ExampleApiTest extends TestCase
 {
     private $client;
 
