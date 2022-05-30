@@ -54,5 +54,3 @@ class ExampleApiTest extends TestCase
     }
 
 }
-
-?>

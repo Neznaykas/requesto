@@ -4,10 +4,10 @@ namespace Drom\Http;
 
 interface HInterface
 {
-    public function get(string $url): string;
-    public function post(string $url): string;
-    public function put(string $url): string;
-    public function getStatusCode(): int;
+   public function get(string $url): string;
+   public function post(string $url): string;
+   public function put(string $url): string;
+   public function getStatusCode(): int;
 }
 
 class HttpMethod implements HInterface
@@ -17,7 +17,7 @@ class HttpMethod implements HInterface
 
    public function __construct()
    {
-      $this->client = new Request(); 
+      $this->client = new Request();
       $this->client->setOption(CURLOPT_RETURNTRANSFER, true);
       $this->client->setOption(CURLOPT_SSL_VERIFYPEER, false);
       $this->client->setOption(CURLOPT_HEADER, false);
@@ -26,13 +26,13 @@ class HttpMethod implements HInterface
    }
 
    function setData(array $params)
-   {  
+   {
       $this->params = $params;
       return $this;
    }
 
    public function setHeaders(array $params)
-   {  
+   {
       $this->client->setOption(CURLOPT_HTTPHEADER, $params);
       return $this;
    }
@@ -48,8 +48,8 @@ class HttpMethod implements HInterface
          $this->params = http_build_query($this->params);
 
       $this->client->setOption(CURLOPT_URL, $url . '?' . $this->params);
-      
-	   return $this->client->execute();
+
+      return $this->client->execute();
    }
 
    public function post(string $url): string
@@ -57,21 +57,20 @@ class HttpMethod implements HInterface
       $this->params = http_build_query($this->params, '', '&');
 
       $this->client->setOption(CURLOPT_POST, true);
-      $this->client->setOption(CURLOPT_POSTFIELDS, $this->params); 
+      $this->client->setOption(CURLOPT_POSTFIELDS, $this->params);
       $this->client->setOption(CURLOPT_URL, $url);
-      
-	   return $this->client->execute();
+
+      return $this->client->execute();
    }
 
    public function put(string $url): string
    {
       $this->params = http_build_query($this->params);
 
-      $this->client->setOption(CURLOPT_CUSTOMREQUEST, 'PUT'); 
-      $this->client->setOption(CURLOPT_POSTFIELDS, $this->params); 
+      $this->client->setOption(CURLOPT_CUSTOMREQUEST, 'PUT');
+      $this->client->setOption(CURLOPT_POSTFIELDS, $this->params);
       $this->client->setOption(CURLOPT_URL, $url);
-      
-	   return $this->client->execute();
-   }
 
+      return $this->client->execute();
+   }
 }

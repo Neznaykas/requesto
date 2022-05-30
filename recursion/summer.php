@@ -32,6 +32,6 @@ function find_and_sum($dir, $delim)
 //на случай запуска на mac\linux
 $delimetr = (PHP_OS == 'WINNT') ? '\\' : '/';
 //предпологаю, что в корне
-$current = $delimetr .'dirs';
+$current = $delimetr . 'dirs';
 //вызов и вывод поиска
 print_r('Сумма найденных значений: ' . find_and_sum(__DIR__  . $current, $delimetr));

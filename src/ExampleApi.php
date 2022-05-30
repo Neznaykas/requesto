@@ -16,7 +16,7 @@ class ExampleApi
             $this->method->setHeaders(['app-id: ' . Config::APP_ID_VALUE]);
     }
 
-    public function getComments(): string//Coomments 
+    public function getComments(): string //Coomments 
     {
         return $this->method->get(Config::GET_USERS);
     }
@@ -29,7 +29,7 @@ class ExampleApi
     public function updateComment($data): string
     {
         return $this->method
-               ->setData($data)
-               ->put(Config::PUT_USER);
+            ->setData($data)
+            ->put(Config::PUT_USER);
     }
 }

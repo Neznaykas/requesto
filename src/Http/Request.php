@@ -45,5 +45,3 @@ class Request implements HttpRequest
         curl_close($this->handle);
     }
 }
-
-?>
