@@ -1,8 +1,10 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-use Drom\Http\HttpMethod;
+namespace Tests;
+
 use Drom\Config;
+use Drom\Http\HttpMethod;
+use PHPUnit\Framework\TestCase;
 
 class ClientTest extends TestCase
 {
