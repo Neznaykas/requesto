@@ -2,27 +2,28 @@
 
 namespace Drom\Http;
 
-interface HInterface
+//use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
+
+/*interface HInterface
 {
    public function get(string $url): string;
    public function post(string $url): string;
    public function put(string $url): string;
    public function getStatusCode(): int;
-}
+}*/
 
-class HttpMethod implements HInterface
+class HttpMethod// implements HInterface
 {
    protected $request;
    private $params;
 
    public function __construct()
    {
-      $this->client = new Request();
-      $this->client->setOption(CURLOPT_RETURNTRANSFER, true);
-      $this->client->setOption(CURLOPT_SSL_VERIFYPEER, false);
-      $this->client->setOption(CURLOPT_HEADER, false);
-
-      return $this;
+      $this->request = new Request();
+      $this->request->setOption(CURLOPT_RETURNTRANSFER, true);
+      $this->request->setOption(CURLOPT_SSL_VERIFYPEER, false);
+      $this->request->setOption(CURLOPT_HEADER, false);
    }
 
    function setData(array $params)
@@ -33,13 +34,13 @@ class HttpMethod implements HInterface
 
    public function setHeaders(array $params)
    {
-      $this->client->setOption(CURLOPT_HTTPHEADER, $params);
+      $this->request->setOption(CURLOPT_HTTPHEADER, $params);
       return $this;
    }
 
    public function getStatusCode(): int
    {
-      return $this->client->getInfo(CURLINFO_RESPONSE_CODE);
+      return $this->request->getInfo(CURLINFO_RESPONSE_CODE);
    }
 
    public function get(string $url): string
@@ -47,30 +48,30 @@ class HttpMethod implements HInterface
       if ($this->params !== null)
          $this->params = http_build_query($this->params);
 
-      $this->client->setOption(CURLOPT_URL, $url . '?' . $this->params);
+      $this->request->setOption(CURLOPT_URL, $url . '?' . $this->params);
 
-      return $this->client->execute();
+      return $this->request->execute();
    }
 
    public function post(string $url): string
    {
       $this->params = http_build_query($this->params, '', '&');
 
-      $this->client->setOption(CURLOPT_POST, true);
-      $this->client->setOption(CURLOPT_POSTFIELDS, $this->params);
-      $this->client->setOption(CURLOPT_URL, $url);
+      $this->request->setOption(CURLOPT_POST, true);
+      $this->request->setOption(CURLOPT_POSTFIELDS, $this->params);
+      $this->request->setOption(CURLOPT_URL, $url);
 
-      return $this->client->execute();
+      return $this->request->execute();
    }
 
    public function put(string $url): string
    {
       $this->params = http_build_query($this->params);
 
-      $this->client->setOption(CURLOPT_CUSTOMREQUEST, 'PUT');
-      $this->client->setOption(CURLOPT_POSTFIELDS, $this->params);
-      $this->client->setOption(CURLOPT_URL, $url);
+      $this->request->setOption(CURLOPT_CUSTOMREQUEST, 'PUT');
+      $this->request->setOption(CURLOPT_POSTFIELDS, $this->params);
+      $this->request->setOption(CURLOPT_URL, $url);
 
-      return $this->client->execute();
+      return $this->request->execute();
    }
 }

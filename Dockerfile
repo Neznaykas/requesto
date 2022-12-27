@@ -1,4 +1,4 @@
-FROM php:7.4.16-fpm
+FROM php:8.1-fpm
 LABEL maintainer="Sergey Snopko"
 
 ARG user=bulder
@@ -21,6 +21,3 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www/html/
 USER $user
-
-#CMD [ "php", "example/index.php" ]
-#EXPOSE 3000

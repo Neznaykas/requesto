@@ -4,11 +4,10 @@ use PHPUnit\Framework\TestCase;
 use Drom\Http\HttpMethod;
 use Drom\Config;
 
-
 class ClientTest extends TestCase
 {
-    /*private $client;
-*/
+    private $client;
+
     public function setUp(): void
     {
         $this->client = new HttpMethod;
@@ -26,7 +25,7 @@ class ClientTest extends TestCase
 
         $client->method('get')->willReturn('{"error":"APP_ID_MISSING"}');
 
-        $this->assertSame('{"error":"APP_ID_MISSING"}', $client->get(Config::BASE_URL));
+        $this->assertSame('{"error":"APP_ID_MISSING"}', $client->method->get(Config::BASE_URL));
     }
 
     public function testProcess() 
