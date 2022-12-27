@@ -15,7 +15,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 
 class HttpMethod// implements HInterface
 {
-   protected $request;
+   protected Request $request;
    private $params;
 
    public function __construct()

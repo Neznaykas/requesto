@@ -27,7 +27,7 @@ class ClientTest extends TestCase
 
         $client->method('get')->willReturn('{"error":"APP_ID_MISSING"}');
 
-        $this->assertSame('{"error":"APP_ID_MISSING"}', $client->method->get(Config::BASE_URL));
+        $this->assertSame('{"error":"APP_ID_MISSING"}', $client->get(Config::BASE_URL));
     }
 
     public function testProcess() 
@@ -40,5 +40,3 @@ class ClientTest extends TestCase
         $this->assertInstanceOf(HttpMethod::class, $client);
     }
 }
-
-?>
