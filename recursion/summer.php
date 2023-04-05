@@ -1,37 +1,30 @@
 <?php
 
-function find_and_sum($dir, $delim)
+function findAndSum(string $dir): float|int
 {
-    $root = scandir($dir);
-    $sum = 0; //не обязательно, но оставлю
+    $directory = new DirectoryIterator($dir);
+    $sum = 0;
 
-    foreach ($root as $value) {
-        if ($value === '.' || $value === '..') {
+    foreach ($directory as $fileInfo) {
+        // Отбрасываем ".", ".." и скрытые файлы.
+        if ($fileInfo->isDot() || $fileInfo->isFile() && $fileInfo->isHidden()) {
             continue;
         }
 
-        $path = $dir . $delim . $value;
-
-        if (is_file($path)) {
-            $string = file_get_contents($path);
-
-            print_r($string);
-            echo '</br>';
-
-            //отрицательные, положительные, дробные, с любым разделителем
-            preg_match_all("!(?:\-+)?\d+(?:\.\d+)?!", $string, $out, PREG_PATTERN_ORDER);
-
-            $sum += array_sum($out[0]);
-            continue;
+        if ($fileInfo->isDir()) {
+            // Рекурсивно вызываем функцию для директории.
+            $subdirSum = findAndSum($fileInfo->getPathname());
+            $sum += $subdirSum;
+        } elseif ($fileInfo->isFile() && str_contains($fileInfo->getFilename(), 'count')) {
+            // Считываем и суммируем числа из файла.
+            $lines = file($fileInfo->getPathname(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            $numbers = array_filter($lines, fn($line) => is_numeric($line));
+            $sum += array_reduce($numbers, fn($carry, $number) => $carry + $number, 0);
         }
-        $sum += find_and_sum($path, $delim);
     }
+
     return $sum;
 }
 
-//на случай запуска на mac\linux
-$delimetr = (PHP_OS == 'WINNT') ? '\\' : '/';
-//предпологаю, что в корне
-$current = $delimetr . 'dirs';
-//вызов и вывод поиска
-print_r('Сумма найденных значений: ' . find_and_sum(__DIR__  . $current, $delimetr));
+$dir = 'dirs';
+echo 'Сумма найденных значений: ' . findAndSum(__DIR__ . '/' . $dir);
