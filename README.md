@@ -1,10 +1,10 @@
 ## Requesto - Coding Challenge
 
-<p>1. # Run</p> <code>docker compose up -d;</code>
-<br>
+<p>1. Run <code>docker compose up -d;</code></p>
+<p></p>
 <p>2. Open <a href="http://localhost ">localhost</a> in browser</p>
 
-<p>3. # Run Dev Tests</p>
+<p>3. Run Dev Tests</p>
 <p><code> docker compose exec php composer test</code></p>
 
 ## Структура проекта
@@ -36,4 +36,4 @@ text - тип string.
 
 <p><code>3. Nginx - конфиг по умолчанию для веб-сервера</code></p>
 
-index.php - точка входа при использовании демо сборки через docker или k8s
+index.php - точка входа при использовании сборки для docker или k8s
