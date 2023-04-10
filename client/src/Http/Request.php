@@ -1,31 +1,26 @@
 <?php
-declare(strict_types = 1);
+
+declare(strict_types=1);
 
 namespace Drom\Http;
 
-interface HttpRequest
-{
-    public function setOption(int $name, $value);
-    public function getInfo(int $name);
-    public function getError();
-    public function execute(): string;
-}
+use CurlHandle;
 
 class Request implements HttpRequest
 {
-    private $handle = null;
+    private null|false|CurlHandle $handle = null;
 
     public function __construct()
     {
         $this->handle = curl_init();
     }
- 
+
     public function setOption(int $name, $value): bool
     {
         return curl_setopt($this->handle, $name, $value);
     }
 
-    public function getInfo(int $name) 
+    public function getInfo(int $name)
     {
         return curl_getinfo($this->handle, $name);
     }

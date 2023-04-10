@@ -55,4 +55,45 @@ class ExampleApiTest extends TestCase
         $this->assertArrayHasKey('firstName', $data);
     }
 
+    public function testGetComments()
+    {
+        $comments = $this->client->getComments();
+        $this->assertIsArray($comments);
+    }
+
+    public function testAddComment()
+    {
+        $comment = [
+            'name' => 'John',
+            'email' => 'john@example.com',
+            'body' => 'This is a test comment'
+        ];
+        $response = $this->client->addComment($comment);
+        $this->assertArrayHasKey('id', $response);
+    }
+
+    public function testUpdateComment()
+    {
+        $comment = [
+            'name' => 'John Doe',
+            'email' => 'johndoe@example.com',
+            'body' => 'This is an updated comment'
+        ];
+        $response = $this->client->updateComment(1, $comment);
+        $this->assertEquals('John Doe', $response['name']);
+    }
+
+    public function testAddCommentWithConfirmation()
+    {
+        $comment = [
+            'name' => 'Jane',
+            'email' => 'jane@example.com',
+            'body' => 'This is a test comment'
+        ];
+        $response = $this->client->addCommentWithConfirmation($comment);
+        $this->assertNotEquals(false, $response);
+    }
+}
+
+
 }
