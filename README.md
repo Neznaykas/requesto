@@ -1,4 +1,4 @@
-<h3># Requesto - Recursive Coding Challenge: PHP HTTP Requests</h3>
+## Requesto - Coding Challenge
 
 <p>1. # Run</p> <code>docker compose up -d;</code> 
 <code>docker-compose exec php composer install</code>
@@ -7,7 +7,7 @@
 <p>3. # Run Dev Tests</p>
 <p><code> docker compose exec php composer test</code></p>
 
-Структура проекта
+## Структура проекта
 
 <p><code>1. Client - реализация http клиента</code></p>
 
