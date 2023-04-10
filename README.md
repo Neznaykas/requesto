@@ -1,6 +1,7 @@
 ## Requesto - Coding Challenge
 
-<p>1. # Run</p> <code>docker compose up -d;</code> 
+<p>1. # Run</p> <code>docker compose up -d;</code>
+
 <code>docker-compose exec php composer install</code>
 <p>2. Open <a href="http://localhost ">localhost</a> in browser</p>
 
@@ -34,4 +35,4 @@ text - тип string.
 В директории может быть файл count
 Нужно пройтись по всем директориям и вернуть сумму всех чисел из файла count (файлов count может быть много)
 
-<p><code>Nginx - конфиг по умолчанию для веб-сервера</code></p>
+<p><code>3. Nginx - конфиг по умолчанию для веб-сервера</code></p>
