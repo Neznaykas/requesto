@@ -1,8 +1,7 @@
 ## Requesto - Coding Challenge
 
 <p>1. # Run</p> <code>docker compose up -d;</code>
-
-<code>docker-compose exec php composer install</code>
+<br>
 <p>2. Open <a href="http://localhost ">localhost</a> in browser</p>
 
 <p>3. # Run Dev Tests</p>
@@ -36,3 +35,5 @@ text - тип string.
 Нужно пройтись по всем директориям и вернуть сумму всех чисел из файла count (файлов count может быть много)
 
 <p><code>3. Nginx - конфиг по умолчанию для веб-сервера</code></p>
+
+index.php - точка входа при использовании демо сборки через docker или k8s
