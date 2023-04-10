@@ -3,6 +3,7 @@ services:
     nginx:
         image: nginx
         restart: always
+        container_name: simple_nginx
         environment:
             - VIRTUAL_HOST=site.local
         depends_on:
@@ -13,16 +14,18 @@ services:
             - ./nginx/default.nginx:/etc/nginx/conf.d/default.conf
             - ./:/var/www/html/
         ports:
-            - 80:80
+            - "80:80"
     php:
         build:
             context: .
             dockerfile: Dockerfile
-        image: test_app
-        container_name: myapp
+        image: app
+        container_name: app
         restart: always
         volumes:
-            - ./:/var/www/html/
+            - ./client/src:/var/www/html/client/src
+            - ./client/tests:/var/www/html/client/tests
+            - ./recursion:/var/www/html/recursion
         networks:
             - backend
         tty: true

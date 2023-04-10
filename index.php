@@ -1,6 +1,16 @@
+<!DOCTYPE html>
+<html lang="EN">
+<head>
+    <title>JSON Data</title>
+    <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="container">
+
 <?php
 
-require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/client/vendor/autoload.php';
 //for two
 require_once __DIR__ . '/recursion/summer.php';
 
@@ -27,3 +37,9 @@ echo $client->addComment($params);
 echo '<p>Update Comment</p>';
 
 echo $client->updateComment(['firstName' => 'qwest']);
+
+?>
+
+</div>
+</body>
+</html>

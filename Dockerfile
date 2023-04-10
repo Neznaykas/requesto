@@ -1,23 +1,22 @@
-FROM php:8.1-fpm
+FROM php:8.1.5-fpm-alpine
 LABEL maintainer="Sergey Snopko"
 
-ARG user=bulder
-ARG uid=1001
-
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
-RUN mkdir -p /home/$user/.composer && \
-    chown -R $user:$user /home/$user
-
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 COPY . .
 
+WORKDIR /var/www/html/client
+RUN composer install
+
 #for Dev
-RUN apt-get update && apt-get install -y \
-    git \
-    zip \
-    curl \
-    sudo \
-    unzip
+RUN apk update \
+    && apk add --no-cache \
+        unzip \
+        git \
+        iputils \
+        icu-dev \
+        bzip2-dev \
+        curl \
+        bash
 
 WORKDIR /var/www/html/
-USER $user

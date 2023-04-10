@@ -7,7 +7,7 @@ function findAndSum(string $dir): float|int
 
     foreach ($directory as $fileInfo) {
         // Отбрасываем ".", ".." и скрытые файлы.
-        if ($fileInfo->isDot() || $fileInfo->isFile() && $fileInfo->isHidden()) {
+        if ($fileInfo->isDot() || $fileInfo->isFile() && str_starts_with($fileInfo->getFilename(), '.')) {
             continue;
         }
 

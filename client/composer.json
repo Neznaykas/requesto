@@ -24,7 +24,8 @@
     },
     "require-dev": {
         "psr/http-message": "^1.0",
-        "phpunit/phpunit": "^9"
+        "phpunit/phpunit": "^9",
+        "friendsofphp/php-cs-fixer": "^3.13"
     },
     "scripts": {
         "test": "phpunit tests --colors=always"
