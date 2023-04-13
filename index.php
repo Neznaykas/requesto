@@ -7,16 +7,17 @@
 
 <body>
 <div class="container">
+<div class="card">
+    <?php require_once __DIR__ . '/recursion/summer.php'; ?>
+</div>
 
+<h4>Client Example</h4>
+    <div class="card">
 <?php
 
 require_once __DIR__ . '/client/vendor/autoload.php';
-//for two
-require_once __DIR__ . '/recursion/summer.php';
 
 use Drom\ExampleApi;
-
-echo '<h4>Client Example</h4>';
 
 $client = new ExampleApi();
 
@@ -39,7 +40,7 @@ echo '<p>Update Comment</p>';
 echo $client->updateComment(['firstName' => 'qwest']);
 
 ?>
-
+    </div>
 </div>
 </body>
 </html>

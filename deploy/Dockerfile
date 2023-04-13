@@ -3,12 +3,6 @@ LABEL maintainer="Sergey Snopko"
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY . .
-
-WORKDIR /var/www/html/client
-RUN composer install
-
-#for Dev
 RUN apk update \
     && apk add --no-cache \
         unzip \
@@ -19,4 +13,6 @@ RUN apk update \
         curl \
         bash
 
-WORKDIR /var/www/html/
+COPY . .
+
+RUN cd client && composer install

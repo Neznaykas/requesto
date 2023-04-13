@@ -93,7 +93,5 @@ class ExampleApiTest extends TestCase
         $response = $this->client->addCommentWithConfirmation($comment);
         $this->assertNotEquals(false, $response);
     }
-}
-
 
 }

@@ -1,6 +1,6 @@
 ## Requesto - Coding Challenge
 
-<p>1. Run <code>docker compose up -d;</code></p>
+<p>1. Run <code> cd deploy && docker compose up -d;</code></p>
 <p></p>
 <p>2. Open <a href="http://localhost ">localhost</a> in browser</p>
 

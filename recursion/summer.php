@@ -26,5 +26,4 @@ function findAndSum(string $dir): float|int
     return $sum;
 }
 
-$dir = 'dirs';
-echo 'Сумма найденных значений: ' . findAndSum(__DIR__ . '/' . $dir);
+echo 'Сумма найденных значений: ' . findAndSum(__DIR__ . '/dirs');

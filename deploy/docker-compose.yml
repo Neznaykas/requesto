@@ -1,0 +1,54 @@
+version: '3.9'
+
+name: "requesto"
+
+services:
+    nginx:
+        image: nginx
+        restart: always
+        container_name: simple_nginx
+        environment:
+            - VIRTUAL_HOST=site.local
+        depends_on:
+            - php
+        networks:
+            - backend
+        volumes:
+            - ./nginx/default.nginx:/etc/nginx/conf.d/default.conf
+            - ../:/var/www/html/
+        ports:
+            - "80:80"
+    php:
+        build:
+            context: ..
+            dockerfile: deploy/Dockerfile
+        image: app
+        container_name: app
+        restart: always
+        volumes:
+            - src:/var/www/html/client/src
+            - tests:/var/www/html/client/tests
+            - ../recursion:/var/www/html/recursion
+            - ../index.php:/var/www/html/index.php
+            - ../style.css:/var/www/html/style.css
+        networks:
+            - backend
+        tty: true
+
+volumes:
+    src:
+        driver: local
+        driver_opts:
+            type: 'none'
+            o: 'bind'
+            device: '../client/src'
+    tests:
+        driver: local
+        driver_opts:
+            type: 'none'
+            o: 'bind'
+            device: '../client/tests'
+
+networks:
+    backend:
+    
