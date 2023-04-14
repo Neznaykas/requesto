@@ -1,5 +1,4 @@
 version: '3.9'
-
 name: "requesto"
 
 services:
@@ -30,7 +29,6 @@ services:
             - tests:/var/www/html/client/tests
             - ../recursion:/var/www/html/recursion
             - ../index.php:/var/www/html/index.php
-            - ../style.css:/var/www/html/style.css
         networks:
             - backend
         tty: true

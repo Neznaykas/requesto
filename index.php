@@ -2,45 +2,40 @@
 <html lang="EN">
 <head>
     <title>JSON Data</title>
-    <link href="style.css" rel="stylesheet">
 </head>
-
 <body>
 <div class="container">
-<div class="card">
     <?php require_once __DIR__ . '/recursion/summer.php'; ?>
-</div>
 
-<h4>Client Example</h4>
-    <div class="card">
-<?php
+    <h4>Client Example</h4>
 
-require_once __DIR__ . '/client/vendor/autoload.php';
+    <?php
 
-use Drom\ExampleApi;
+    require_once __DIR__ . '/client/vendor/autoload.php';
 
-$client = new ExampleApi();
+    use Drom\ExampleApi;
 
-echo '<p>Get Comments</p>';
+    $client = new ExampleApi();
 
-echo $client->getComments();
+    echo '<p>Get Comments</p>';
 
-echo '<p>Add Comment</p>';
+    echo $client->getComments();
 
-$params = array(
-    'message' => 'qwest',
-    'owner' => '60d0fe4f5311236168a109d0',
-    'post' => '60d21b7967d0d8992e610d1b'
-);
+    echo '<p>Add Comment</p>';
 
-echo $client->addComment($params);
+    $params = array(
+        'message' => 'qwest',
+        'owner' => '60d0fe4f5311236168a109d0',
+        'post' => '60d21b7967d0d8992e610d1b'
+    );
 
-echo '<p>Update Comment</p>';
+    echo $client->addComment($params);
 
-echo $client->updateComment(['firstName' => 'qwest']);
+    echo '<p>Update Comment</p>';
 
-?>
-    </div>
+    echo $client->updateComment(['firstName' => 'qwest']);
+
+    ?>
 </div>
 </body>
 </html>
