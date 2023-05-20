@@ -2,28 +2,25 @@
 
 function findAndSum(string $dir): float|int
 {
-    $directory = new DirectoryIterator($dir);
     $sum = 0;
+    $directory = new RecursiveDirectoryIterator($dir);
 
-    foreach ($directory as $fileInfo) {
-        // Отбрасываем ".", ".." и скрытые файлы.
-        if ($fileInfo->isDot() || $fileInfo->isFile() && str_starts_with($fileInfo->getFilename(), '.')) {
-            continue;
-        }
-
-        if ($fileInfo->isDir()) {
-            // Рекурсивно вызываем функцию для директории.
-            $subdirSum = findAndSum($fileInfo->getPathname());
-            $sum += $subdirSum;
-        } elseif ($fileInfo->isFile() && str_contains($fileInfo->getFilename(), 'count')) {
-            // Считываем и суммируем числа из файла.
+    foreach (new RecursiveIteratorIterator($directory) as $fileInfo) {
+        if ($fileInfo->isFile() && str_contains($fileInfo->getFilename(), 'count')) {
             $lines = file($fileInfo->getPathname(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
             $numbers = array_filter($lines, fn($line) => is_numeric($line));
-            $sum += array_reduce($numbers, fn($carry, $number) => $carry + $number, 0);
+            $sum += array_sum($numbers);
         }
     }
 
     return $sum;
 }
 
-echo 'Сумма найденных значений: ' . findAndSum(__DIR__ . '/dirs');
+if (PHP_SAPI == "cli") {
+    $options = getopt("d");
+
+    if (isset($options['d']))
+        echo findAndSum($options['d']);
+    else
+        echo 'set param d - directory';
+}

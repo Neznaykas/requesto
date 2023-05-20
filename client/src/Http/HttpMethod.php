@@ -2,21 +2,10 @@
 
 namespace Drom\Http;
 
-//use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
-
-/*interface HInterface
-{
-   public function get(string $url): string;
-   public function post(string $url): string;
-   public function put(string $url): string;
-   public function getStatusCode(): int;
-}*/
-
-class HttpMethod // implements HInterface
+class HttpMethod  implements HInterface
 {
     protected Request $request;
-    private $params;
+    private array $params;
 
     public function __construct()
     {
@@ -26,13 +15,13 @@ class HttpMethod // implements HInterface
         $this->request->setOption(CURLOPT_HEADER, false);
     }
 
-    public function setData(array $params)
+    public function setData(array $params): static
     {
         $this->params = $params;
         return $this;
     }
 
-    public function setHeaders(array $params)
+    public function setHeaders(array $params): static
     {
         $this->request->setOption(CURLOPT_HTTPHEADER, $params);
         return $this;

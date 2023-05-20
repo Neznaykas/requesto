@@ -7,31 +7,35 @@ use Drom\Http\HttpMethod;
 class ExampleApi
 {
     private HttpMethod $method;
+    private Config $config;
 
-    public function __construct()
+    public function __construct(Config $config)
     {
         $this->method = new HttpMethod();
+        $this->config = $config;
 
-        if (Config::APP_ID_VALUE !== null) {
-            $this->method->setHeaders(['app-id: ' . Config::APP_ID_VALUE]);
+        if ($config::APP_ID_VALUE !== null) {
+            $this->method->setHeaders(['app-id: ' . $config::APP_ID_VALUE]);
         }
     }
 
     public function getComments(): string //Coomments
     {
-        return $this->method->get(Config::GET_USERS);
+        $response = $this->method->get($this->config::GET_USERS);
+
+        return json_decode($response->getBody(), true);
     }
 
     public function addComment($data): string
     {
-        return $this->method->setData($data)->post(Config::POST_COMMENT);
+        return $this->method->setData($data)->post($this->config::POST_COMMENT);
     }
 
     public function updateComment($data): string
     {
         return $this->method
             ->setData($data)
-            ->put(Config::PUT_USER);
+            ->put($this->config::PUT_USER);
     }
 
 }

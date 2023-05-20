@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="EN">
+<html lang="RU">
 <head>
     <title>JSON Data</title>
 </head>
 <body>
 <div class="container">
-    <?php require_once __DIR__ . '/recursion/summer.php'; ?>
+    <h4>Summer Result</h4>
+    <?php
+        require_once __DIR__ . '/recursion/summer.php';
+        echo 'Сумма найденных значений: ' . findAndSum(__DIR__ . '/recursion/dirs');
+    ?>
 
     <h4>Client Example</h4>
 
@@ -13,9 +17,10 @@
 
     require_once __DIR__ . '/client/vendor/autoload.php';
 
+    use Drom\Config;
     use Drom\ExampleApi;
 
-    $client = new ExampleApi();
+    $client = new ExampleApi(new Config());
 
     echo '<p>Get Comments</p>';
 

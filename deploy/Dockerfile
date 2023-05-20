@@ -4,9 +4,9 @@ FROM composer:latest as build
 WORKDIR /client
 COPY client/composer.json client/composer.lock ./
 
-RUN composer install --prefer-dist --no-interaction --no-dev
+RUN composer install --prefer-dist --no-interaction #--no-dev
 COPY . ..
-RUN composer dump-autoload --optimize --no-dev --classmap-authoritative
+RUN composer dump-autoload --optimize #--no-dev --classmap-authoritative
 RUN composer clear-cache
 
 # Финальный этап
@@ -24,8 +24,7 @@ RUN apk update && \
     libpng-dev \
     libjpeg-turbo-dev \
     freetype-dev \
-    oniguruma-dev && \
-    docker-php-ext-install bcmath pdo_mysql mysqli gd zip
+    oniguruma-dev
 
 WORKDIR /var/www/html
 COPY --from=build /client /var/www/html/client

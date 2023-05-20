@@ -8,7 +8,7 @@ use CurlHandle;
 
 class Request implements HttpRequest
 {
-    private null|false|CurlHandle $handle = null;
+    private null|false|CurlHandle $handle;
 
     public function __construct()
     {
