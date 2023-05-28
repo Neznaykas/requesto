@@ -20,8 +20,7 @@
 
 GET http://example.com/comments - возвращает список комментариев
 POST http://example.com/comment - добавить комментарий.
-PUT http://example.com/comment/{id} - по идентификатору комментария обновляет поля, которые были в в запросе
-
+<br>PUT http://example.com/comment/{id} - по идентификатору комментария обновляет поля, которые были в в запросе
 Объект comment содержит поля:
 id - тип int. Не нужно указывать при добавлении.
 name - тип string.

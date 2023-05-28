@@ -20,10 +20,15 @@
     ],
     "require": {
         "php": ">=8.0.0",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "psr/http-client": "^1.0",
+        "psr/http-client-implementation": "*",
+        "psr/http-factory": "^1.0",
+        "psr/http-factory-implementation": "*"
     },
     "require-dev": {
-        "psr/http-message": "^1.0",
+        "guzzlehttp/psr7": "*",
+        "guzzlehttp/guzzle": "*",
         "phpunit/phpunit": "^9",
         "friendsofphp/php-cs-fixer": "^3.13"
     },

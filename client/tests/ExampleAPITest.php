@@ -2,20 +2,22 @@
 
 namespace Tests;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\HttpFactory;
+use GuzzleHttp\Psr7;
 use PHPUnit\Framework\TestCase;
 use Drom\ExampleApi;
 
 class ExampleApiTest extends TestCase
 {
-    private $client;
+    private ExampleApi $client;
 
     public function setUp(): void
     {
-        $this->client = new ExampleApi();
-    }
+        $client = new Client();
+        $stream = Psr7\stream_for('string data');
 
-    public function tearDown(): void {
-        $this->client = null;
+        $this->client = new ExampleApi(new HttpFactory(), $stream, $client);
     }
 
     public function testGetComments()
@@ -42,7 +44,7 @@ class ExampleApiTest extends TestCase
         $this->assertNotEmpty($response);
     }
 
-    public function testUpdateComment()
+    public function testUpdateComment1()
     {
         $params = ['firstName' => 'qwest'];
 
@@ -55,13 +57,13 @@ class ExampleApiTest extends TestCase
         $this->assertArrayHasKey('firstName', $data);
     }
 
-    public function testGetComments()
+    public function testGetComments1()
     {
         $comments = $this->client->getComments();
         $this->assertIsArray($comments);
     }
 
-    public function testAddComment()
+    public function testAddComment1()
     {
         $comment = [
             'name' => 'John',

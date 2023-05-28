@@ -2,67 +2,73 @@
 
 namespace Drom;
 
-use Drom\Http\HttpMethod;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
 
 class ExampleApi
 {
-    private HttpMethod $method;
-    private Config $config;
+    private RequestFactoryInterface $requestFactory;
+    private StreamFactoryInterface $streamFactory;
+    private ClientInterface $httpClient;
 
-    public function __construct(Config $config)
+    public function __construct(
+        RequestFactoryInterface $requestFactory,
+        StreamFactoryInterface $streamFactory,
+        ClientInterface $httpClient
+    ) {
+        $this->requestFactory = $requestFactory;
+        $this->streamFactory = $streamFactory;
+        $this->httpClient = $httpClient;
+    }
+
+    public function get(string $url): ResponseInterface
     {
-        $this->method = new HttpMethod();
-        $this->config = $config;
+        $request = $this->requestFactory->createRequest('GET', $url)
+            ->withHeader('Content-Type', 'application/json');
 
-        if ($config::APP_ID_VALUE !== null) {
-            $this->method->setHeaders(['app-id: ' . $config::APP_ID_VALUE]);
+        $response = $this->httpClient->sendRequest($request);
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode > 500) {
+            throw new ServiceUnavailableException();
         }
+
+        if ($statusCode === 500) {
+            throw new ServerErrorException();
+        }
+
+        if ($statusCode >= 400) {
+            throw new ClientException();
+        }
+
+        return $response;
     }
 
-    public function getComments(): string //Coomments
+    public function post(array $thing): ResponseInterface
     {
-        $response = $this->method->get($this->config::GET_USERS);
+        $body = $this->streamFactory->createStream(json_encode($thing));
+        $request = $this->requestFactory->createRequest('POST', 'https://api.myservice.com/things')
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody($body);
 
-        return json_decode($response->getBody(), true);
-    }
+        $response = $this->httpClient->sendRequest($request);
+        $statusCode = $response->getStatusCode();
 
-    public function addComment($data): string
-    {
-        return $this->method->setData($data)->post($this->config::POST_COMMENT);
-    }
+        if ($statusCode > 500) {
+            throw new ServiceUnavailableException();
+        }
 
-    public function updateComment($data): string
-    {
-        return $this->method
-            ->setData($data)
-            ->put($this->config::PUT_USER);
-    }
+        if ($statusCode === 500) {
+            throw new ServerErrorException();
+        }
 
-}
+        if ($statusCode >= 400) {
+            throw new ClientException();
+        }
 
-class ExampleClient
-{
-    private $base_uri = 'http://example.com';
-    private $client;
-
-    public function __construct()
-    {
-        $this->client = new GuzzleHttp\Client(['base_uri' => $this->base_uri]);
-    }
-
-    public function get($url)
-    {
-        return $this->client->get($url);
-    }
-
-    public function post($url, $data)
-    {
-        return $this->client->post($url, ['json' => $data]);
-    }
-
-    public function put($url, $data)
-    {
-        return $this->client->put($url, ['json' => $data]);
+        return $response;
     }
 
     public function getComments()
