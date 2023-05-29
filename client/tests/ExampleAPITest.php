@@ -15,10 +15,9 @@ class ExampleAPITest extends TestCase
 
     public function setUp(): void
     {
-        $client = new Client();
         $stream = Psr7\Utils::streamFor('');
 
-        $this->client = new ExampleApi(new HttpFactory(), $stream, $client, $this->url);
+        $this->client = new ExampleApi(new HttpFactory(), $stream, new Client(), $this->url);
     }
 
     public function testGetComments()
@@ -32,40 +31,14 @@ class ExampleAPITest extends TestCase
 
     public function testAddComment()
     {
-        $params = [
-            'message' => 'qwest',
-            'owner' => '60d0fe4f5311236168a109d0',
-            'post' => '60d21b7967d0d8992e610d1b'
-        ];
-
-        $response = $this->client->addComment($params);
-
-        //200 OK
-        //$this->assertEquals(200, $this->client->getStatusCode());
-        $this->assertNotEmpty($response);
-    }
-
-    public function testUpdateComment1()
-    {
-        $params = ['firstName' => 'qwest'];
-
-        $response = $this->client->updateComment($params);
-
-        //$this->assertEquals(200, $this->client->getStatusCode());
-        $this->assertNotEmpty($response);
-
-        $data = json_decode($response, true);
-        $this->assertArrayHasKey('firstName', $data);
-    }
-
-    public function testAddComment1()
-    {
         $comment = [
             'name' => 'John',
             'email' => 'john@example.com',
             'body' => 'This is a test comment'
         ];
         $response = $this->client->addComment($comment);
+
+        //$this->assertEquals(200, $this->client->getStatusCode());
         $this->assertArrayHasKey('id', $response);
     }
 
@@ -76,7 +49,15 @@ class ExampleAPITest extends TestCase
             'email' => 'johndoe@example.com',
             'body' => 'This is an updated comment'
         ];
+
         $response = $this->client->updateComment(1, $comment);
+
+       // $this->assertEquals(200, $response->);
+        $this->assertNotEmpty($response);
+
+        $data = json_decode($response, true);
+        $this->assertArrayHasKey('firstName', $data);
+
         $this->assertEquals('John Doe', $response['name']);
     }
 

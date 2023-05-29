@@ -2,6 +2,7 @@
 
 namespace Drom;
 
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -26,29 +27,26 @@ class ExampleApi
         $this->baseUrl = $baseUrl;
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws ApiException
+     */
     public function get(string $url): ResponseInterface
     {
         $request = $this->requestFactory->createRequest('GET', $this->baseUrl . $url)
             ->withHeader('Content-Type', 'application/json');
 
-        $response = $this->httpClient->sendRequest($request);
-        $statusCode = $response->getStatusCode();
-
-        if ($statusCode > 500) {
-            throw new ServiceUnavailableException();
-        }
-
-        if ($statusCode === 500) {
-            throw new ServerErrorException();
-        }
-
-        if ($statusCode >= 400) {
-            throw new ClientException();
-        }
+        $this->handleResponse(
+            $response = $this->httpClient->sendRequest($request)
+        );
 
         return $response;
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     * @throws ApiException
+     */
     public function post(string $url, array $data): ResponseInterface
     {
         $this->stream->write(json_encode($data));
@@ -57,24 +55,18 @@ class ExampleApi
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->stream);
 
-        $response = $this->httpClient->sendRequest($request);
-        $statusCode = $response->getStatusCode();
 
-        if ($statusCode > 500) {
-            throw new ServiceUnavailableException();
-        }
-
-        if ($statusCode === 500) {
-            throw new ServerErrorException();
-        }
-
-        if ($statusCode >= 400) {
-            throw new ClientException();
-        }
+        $this->handleResponse(
+            $response = $this->httpClient->sendRequest($request)
+        );
 
         return $response;
     }
 
+    /**
+     * @throws ApiException
+     * @throws ClientExceptionInterface
+     */
     public function put(string $url, array $data): ResponseInterface
     {
         $this->stream->write(json_encode($data));
@@ -83,20 +75,9 @@ class ExampleApi
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->stream);
 
-        $response = $this->httpClient->sendRequest($request);
-        $statusCode = $response->getStatusCode();
-
-        if ($statusCode > 500) {
-            throw new ServiceUnavailableException();
-        }
-
-        if ($statusCode === 500) {
-            throw new ServerErrorException();
-        }
-
-        if ($statusCode >= 400) {
-            throw new ClientException();
-        }
+        $this->handleResponse(
+            $response = $this->httpClient->sendRequest($request)
+        );
 
         return $response;
     }
@@ -130,4 +111,24 @@ class ExampleApi
         }
     }
 
+    /**
+     * @throws ApiException
+     */
+    private function handleResponse(ResponseInterface $response): void
+    {
+        if ($response->getStatusCode() !== 200) {
+            throw new ApiException("Response status code is not 200 OK", $response);
+        }
+
+        try {
+            $json = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\JsonException) {
+            throw new ApiException("Invalid json schema.", $response);
+        }
+
+        if ($json['status'] === 'failed') {
+            throw new ApiException("Response status is failed.", $response);
+        }
+
+    }
 }

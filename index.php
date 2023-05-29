@@ -24,8 +24,11 @@
     const PUT_USER = BASE_URL . 'user/60d0fe4f5311236168a109ca';
 
     use Drom\ExampleApi;
+    use GuzzleHttp\Client;
+    use GuzzleHttp\Psr7\HttpFactory;
+    use GuzzleHttp\Psr7;
 
-    $client = new ExampleApi();
+    $client = new ExampleApi(new HttpFactory(), Psr7\Utils::streamFor(''), new Client(), BASE_URL);
 
     echo '<p>Get Comments</p>';
 
@@ -43,7 +46,7 @@
 
     echo '<p>Update Comment</p>';
 
-    echo $client->updateComment(['firstName' => 'qwest']);
+    echo $client->updateComment(1, ['firstName' => 'qwest']);
 
     ?>
 </div>
