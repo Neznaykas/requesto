@@ -36,7 +36,7 @@ text - тип string.
 class ExampleService
 {
     public function __construct(
-        private readonly \TestAssignment\Client\CommentsClientInterface $client
+        private readonly Client\CommentsClientInterface $client
     ) {
     }
     
@@ -45,7 +45,7 @@ class ExampleService
         try {
             /** @var Comment[] */
             $comments = $this->client->get();
-        } catch (\TestAssignment\Exception\ApiException $e) {
+        } catch (\ApiException $e) {
             ...
         }
     } 
@@ -53,7 +53,7 @@ class ExampleService
 
 $client = new ExampleClient(newGuzzlehttp, new Config());
 
-$service = new ExampleService(new \TestAssignment\Client\CommentsClient());
+$service = new ExampleService(new Client());
 ```
 
 <p><code>2. Директория recursion - реализация обхода директорий</code></p>
