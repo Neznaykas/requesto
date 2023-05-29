@@ -8,16 +8,17 @@ use GuzzleHttp\Psr7;
 use PHPUnit\Framework\TestCase;
 use Drom\ExampleApi;
 
-class ExampleApiTest extends TestCase
+class ExampleAPITest extends TestCase
 {
     private ExampleApi $client;
+    private string $url = 'https://dummyapi.io/data/v1/';
 
     public function setUp(): void
     {
         $client = new Client();
-        $stream = Psr7\stream_for('string data');
+        $stream = Psr7\Utils::streamFor('');
 
-        $this->client = new ExampleApi(new HttpFactory(), $stream, $client);
+        $this->client = new ExampleApi(new HttpFactory(), $stream, $client, $this->url);
     }
 
     public function testGetComments()
@@ -55,12 +56,6 @@ class ExampleApiTest extends TestCase
 
         $data = json_decode($response, true);
         $this->assertArrayHasKey('firstName', $data);
-    }
-
-    public function testGetComments1()
-    {
-        $comments = $this->client->getComments();
-        $this->assertIsArray($comments);
     }
 
     public function testAddComment1()

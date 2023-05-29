@@ -4,28 +4,31 @@ namespace Drom;
 
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\StreamFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 class ExampleApi
 {
     private RequestFactoryInterface $requestFactory;
-    private StreamFactoryInterface $streamFactory;
+    private StreamInterface $stream;
     private ClientInterface $httpClient;
+    private string $baseUrl;
 
     public function __construct(
         RequestFactoryInterface $requestFactory,
-        StreamFactoryInterface $streamFactory,
-        ClientInterface $httpClient
+        StreamInterface $stream,
+        ClientInterface $httpClient,
+        string $baseUrl
     ) {
         $this->requestFactory = $requestFactory;
-        $this->streamFactory = $streamFactory;
+        $this->stream = $stream;
         $this->httpClient = $httpClient;
+        $this->baseUrl = $baseUrl;
     }
 
     public function get(string $url): ResponseInterface
     {
-        $request = $this->requestFactory->createRequest('GET', $url)
+        $request = $this->requestFactory->createRequest('GET', $this->baseUrl . $url)
             ->withHeader('Content-Type', 'application/json');
 
         $response = $this->httpClient->sendRequest($request);
@@ -46,12 +49,39 @@ class ExampleApi
         return $response;
     }
 
-    public function post(array $thing): ResponseInterface
+    public function post(string $url, array $data): ResponseInterface
     {
-        $body = $this->streamFactory->createStream(json_encode($thing));
-        $request = $this->requestFactory->createRequest('POST', 'https://api.myservice.com/things')
+        $this->stream->write(json_encode($data));
+
+        $request = $this->requestFactory->createRequest('POST', $this->baseUrl . $url)
             ->withHeader('Content-Type', 'application/json')
-            ->withBody($body);
+            ->withBody($this->stream);
+
+        $response = $this->httpClient->sendRequest($request);
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode > 500) {
+            throw new ServiceUnavailableException();
+        }
+
+        if ($statusCode === 500) {
+            throw new ServerErrorException();
+        }
+
+        if ($statusCode >= 400) {
+            throw new ClientException();
+        }
+
+        return $response;
+    }
+
+    public function put(string $url, array $data): ResponseInterface
+    {
+        $this->stream->write(json_encode($data));
+
+        $request = $this->requestFactory->createRequest('PUT', $this->baseUrl . $url)
+            ->withHeader('Content-Type', 'application/json')
+            ->withBody($this->stream);
 
         $response = $this->httpClient->sendRequest($request);
         $statusCode = $response->getStatusCode();
