@@ -2,6 +2,7 @@
 
 namespace Drom;
 
+use GuzzleHttp\Client;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -13,18 +14,20 @@ class ExampleApi
     private RequestFactoryInterface $requestFactory;
     private StreamInterface $stream;
     private ClientInterface $httpClient;
-    private string $baseUrl;
 
     public function __construct(
         RequestFactoryInterface $requestFactory,
         StreamInterface $stream,
-        ClientInterface $httpClient,
-        string $baseUrl
+        ?ClientInterface $httpClient
     ) {
         $this->requestFactory = $requestFactory;
         $this->stream = $stream;
-        $this->httpClient = $httpClient;
-        $this->baseUrl = $baseUrl;
+
+        $config = [
+            'base_uri' => 'https://example.com',
+        ];
+
+        $this->httpClient = $httpClient ?? new Client($config);
     }
 
     /**
@@ -33,7 +36,7 @@ class ExampleApi
      */
     public function get(string $url): ResponseInterface
     {
-        $request = $this->requestFactory->createRequest('GET', $this->baseUrl . $url)
+        $request = $this->requestFactory->createRequest('GET', $url)
             ->withHeader('Content-Type', 'application/json');
 
         $this->handleResponse(
@@ -51,7 +54,7 @@ class ExampleApi
     {
         $this->stream->write(json_encode($data));
 
-        $request = $this->requestFactory->createRequest('POST', $this->baseUrl . $url)
+        $request = $this->requestFactory->createRequest('POST', $url)
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->stream);
 
@@ -71,7 +74,7 @@ class ExampleApi
     {
         $this->stream->write(json_encode($data));
 
-        $request = $this->requestFactory->createRequest('PUT', $this->baseUrl . $url)
+        $request = $this->requestFactory->createRequest('PUT', $url)
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->stream);
 
@@ -82,24 +85,40 @@ class ExampleApi
         return $response;
     }
 
+    /**
+     * @throws ApiException
+     * @throws ClientExceptionInterface
+     */
     public function getComments()
     {
         $response = $this->get('/comments');
         return json_decode($response->getBody(), true);
     }
 
+    /**
+     * @throws ApiException
+     * @throws ClientExceptionInterface
+     */
     public function addComment($comment)
     {
         $response = $this->post('/comment', $comment);
         return json_decode($response->getBody(), true);
     }
 
+    /**
+     * @throws ApiException
+     * @throws ClientExceptionInterface
+     */
     public function updateComment($id, $comment)
     {
         $response = $this->put('/comment/'.$id, $comment);
         return json_decode($response->getBody(), true);
     }
 
+    /**
+     * @throws ApiException
+     * @throws ClientExceptionInterface
+     */
     public function addCommentWithConfirmation($comment)
     {
         $response = $this->post('/comment', $comment);

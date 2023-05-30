@@ -27,12 +27,16 @@
     use GuzzleHttp\Client;
     use GuzzleHttp\Psr7\HttpFactory;
     use GuzzleHttp\Psr7;
+    use Psr\Http\Client\ClientExceptionInterface;
 
-    $client = new ExampleApi(new HttpFactory(), Psr7\Utils::streamFor(''), new Client(), BASE_URL);
+    $client = new ExampleApi(new HttpFactory(), Psr7\Utils::streamFor(''), new Client(['base_uri' => BASE_URL]));
 
     echo '<p>Get Comments</p>';
 
-    echo $client->getComments();
+    try {
+        echo $client->get('user')->getBody();
+    } catch (\Drom\ApiException|ClientExceptionInterface $e) {
+    }
 
     echo '<p>Add Comment</p>';
 

@@ -3,29 +3,43 @@
 namespace Tests;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Handler\MockHandler;
+use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
 use Drom\ExampleApi;
 
 class ExampleAPITest extends TestCase
 {
+    private MockHandler $mockHandler;
     private ExampleApi $client;
-    private string $url = 'https://dummyapi.io/data/v1/';
 
     public function setUp(): void
     {
-        $stream = Psr7\Utils::streamFor('');
+        $this->mockHandler = new MockHandler();
+        $handlerStack = HandlerStack::create($this->mockHandler);
 
-        $this->client = new ExampleApi(new HttpFactory(), $stream, new Client(), $this->url);
+        $stream = Psr7\Utils::streamFor('');
+        $httClient = new Client(['handler' => $handlerStack, RequestOptions::HTTP_ERRORS => false]);
+
+        $this->client = new ExampleApi(new HttpFactory(), $stream, $httClient);
     }
 
     public function testGetComments()
     {
-        $response = $this->client->getComments();
-        //403 Forbidden 
-        //$this->assertEquals(403, $this->client->getStatusCode());
+        $json = [
+            'status' => 'success',
+            'data' => [
+                ['id' => 1, 'name' => 'test', 'text' => 'test'],
+                ['id' => 2, 'name' => 'test', 'text' => 'test'],
+            ]
+        ];
 
+        $this->mockHandler->append(new Response(200, [], json_encode($json)));
+        $response = $this->client->getComments();
         $this->assertNotEmpty($response);
     }
 
@@ -36,29 +50,43 @@ class ExampleAPITest extends TestCase
             'email' => 'john@example.com',
             'body' => 'This is a test comment'
         ];
+
+        $json = [
+            'status' => 'success',
+            'data' => [
+                ['id' => 1, 'name' => 'test', 'text' => 'test'],
+                ['id' => 2, 'name' => 'test', 'text' => 'test'],
+            ]
+        ];
+
+        $this->mockHandler->append(new Response(200, [], json_encode($json)));
+
         $response = $this->client->addComment($comment);
 
-        //$this->assertEquals(200, $this->client->getStatusCode());
-        $this->assertArrayHasKey('id', $response);
+        //$this->assertEquals(200, $response->getStatusCode());
+        $this->assertArrayHasKey('id', $response['data'][0]);
     }
 
     public function testUpdateComment()
     {
-        $comment = [
-            'name' => 'John Doe',
-            'email' => 'johndoe@example.com',
-            'body' => 'This is an updated comment'
+        $comment = ['id' => 1, 'name' => 'test', 'text' => 'test'];
+        $attributes = ['name' => 'Dromer', 'text' => 'test_1'];
+
+        $json = [
+            'status' => 'success',
+            'data' => [...$comment, ...$attributes]
         ];
+
+        $this->mockHandler->append(new Response(200, [], json_encode($json)));
 
         $response = $this->client->updateComment(1, $comment);
 
-       // $this->assertEquals(200, $response->);
         $this->assertNotEmpty($response);
 
-        $data = json_decode($response, true);
-        $this->assertArrayHasKey('firstName', $data);
+        $this->assertArrayHasKey('name', $response['data']);
+        $this->assertArrayHasKey('text', $response['data']);
 
-        $this->assertEquals('John Doe', $response['name']);
+        $this->assertEquals('Dromer', $response['data']['name']);
     }
 
     public function testAddCommentWithConfirmation()
@@ -68,8 +96,20 @@ class ExampleAPITest extends TestCase
             'email' => 'jane@example.com',
             'body' => 'This is a test comment'
         ];
+
+        $json = [
+            'status' => 'success',
+            'data' => [
+                ['id' => 1, 'name' => 'test', 'text' => 'test'],
+                ['id' => 2, 'name' => 'test', 'text' => 'test'],
+            ]
+        ];
+
+        $this->mockHandler->append(new Response(200, [], json_encode($json)));
+
         $response = $this->client->addCommentWithConfirmation($comment);
-        $this->assertNotEquals(false, $response);
+
+        $this->assertNotEquals($json, $response);
     }
 
 }
