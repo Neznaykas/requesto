@@ -19,7 +19,7 @@
 У этого сервиса есть 3 метода:
 
 GET http://example.com/comments - возвращает список комментариев
-POST http://example.com/comment - добавить комментарий.
+<br>POST http://example.com/comment - добавить комментарий.
 <br>PUT http://example.com/comment/{id} - по идентификатору комментария обновляет поля, которые были в в запросе
 Объект comment содержит поля:
 id - тип int. Не нужно указывать при добавлении.
