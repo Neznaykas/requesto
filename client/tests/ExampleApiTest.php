@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Drom\ApiException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -102,9 +103,7 @@ class ExampleApiTest extends TestCase
     #[DataProvider('responsesForTriggerException')]
     public function testHandleResponseException(\Closure $closure)
     {
-        //$this->expectException(\Drom\ApiException::class);
-
-        //$this->expectException(ClientExceptionInterface::class);
+        $this->expectException(ApiException::class);
         $this->expectExceptionCode(0);
         $closure->call($this);
     }
