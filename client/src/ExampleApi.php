@@ -2,7 +2,6 @@
 
 namespace Drom;
 
-use GuzzleHttp\Client;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -28,7 +27,7 @@ class ExampleApi
             'base_uri' => 'https://example.com',
         ];
 
-        $this->httpClient = $httpClient ?? new Client($config);
+        $this->httpClient = $httpClient ?? new $httpClient($config);
     }
 
     /**
@@ -36,7 +35,7 @@ class ExampleApi
      */
     public function make(RequestInterface $request): ResponseInterface
     {
-        $this->handleResponse(
+         $this->handleResponse(
             $response = $this->httpClient->sendRequest($request)
         );
 
@@ -100,13 +99,14 @@ class ExampleApi
 
         try {
             $json = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+            $status = $json['status'] ?? false;
+
+            if ($status === 'failed') {
+                throw new ApiException("Response status failed.", $response);
+            }
         } catch (\JsonException) {
             throw new ApiException("Invalid json schema.", $response);
         }
-
-        /*if ($json['status'] === 'failed') {
-            throw new ApiException("Response status is failed.", $response);
-        }*/
 
     }
 }

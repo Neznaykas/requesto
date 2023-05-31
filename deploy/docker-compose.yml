@@ -30,11 +30,11 @@ services:
         container_name: app
         restart: always
         volumes:
-            - ../client:/var/www/html/client
-           # - .:/var/www/html
+            - ../client/src:/var/www/html/client/src
+            - ../client/tests:/var/www/html/client/tests
             - ../recursion:/var/www/html/recursion
             - ../index.php:/var/www/html/index.php
-        entrypoint: sh /var/www/html/client/entrypoint.sh
+       #entrypoint: sh /var/www/html/client/entrypoint.sh
         networks:
             - backend
         tty: true

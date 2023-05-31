@@ -12,8 +12,9 @@ use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
 use Drom\ExampleApi;
 use Psr\Http\Client\ClientExceptionInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 
-class ExampleAPITest extends TestCase
+class ExampleApiTest extends TestCase
 {
     private MockHandler $mockHandler;
     private ExampleApi $client;
@@ -98,4 +99,36 @@ class ExampleAPITest extends TestCase
         $this->assertEquals('Dromer', $response['data']['name']);
     }
 
+    #[DataProvider('responsesForTriggerException')]
+    public function testHandleResponseException(\Closure $closure)
+    {
+        //$this->expectException(\Drom\ApiException::class);
+
+        //$this->expectException(ClientExceptionInterface::class);
+        $this->expectExceptionCode(0);
+        $closure->call($this);
+    }
+
+    public static function responsesForTriggerException(): array
+    {
+        return [
+            [
+                function (): void {
+                    $this->mockHandler->append(new Response(500));
+                    $this->client->getComments();
+                }
+            ],
+            [
+                function (): void {
+                    $json = [
+                        'status' => 'failed',
+                        'data' => []
+                    ];
+                    $this->mockHandler->append(new Response(200, [], json_encode($json)));
+                    $this->client->getComments();
+                }
+            ]
+        ];
+    }
 }
+

@@ -25,14 +25,12 @@ RUN apk update && \
     libjpeg-turbo-dev \
     freetype-dev \
     oniguruma-dev
-
-RUN apk add rsync
+    #\ rsync
 
 WORKDIR /var/www/html
 
 COPY --from=build /client /var/www/html/client
-COPY --from=build /client/vendor /var/www/cache/vendor/
+#COPY --from=build /client/vendor /var/www/cache/vendor/
 
 RUN chown -R www-data:www-data /var/www/html
-
-RUN chmod +x client/entrypoint.sh
+#RUN chmod +x client/entrypoint.sh

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="RU">
 <head>
-    <title>JSON Data</title>
+    <title>Requesto</title>
 </head>
 <body>
 <div class="container">
@@ -24,31 +24,25 @@
     use GuzzleHttp\RequestOptions;
     use Psr\Http\Client\ClientExceptionInterface;
 
-    const BASE_URL = 'https://dummyapi.io/data/v1/';
-    const APP_ID_VALUE = '617b11efbdaa719034cf6d83';
-    const POST_COMMENT = 'comment/create';
-    const GET_USERS = 'user';
-    const PUT_USER = 'user/';
-
-    $params = array(
-        'message' => 'qwest',
-        'owner' => '60d0fe4f5311236168a109d0',
-        'post' => '60d21b7967d0d8992e610d1b'
-    );
-
     $client = new ExampleApi(new HttpFactory(), Psr7\Utils::streamFor(''),
-        new Client(['base_uri' => BASE_URL, RequestOptions::HEADERS => ['app-id' => APP_ID_VALUE]]));
-
-    echo '<p>Get Comments Test</p>';
+        new Client(['base_uri' => 'https://dummyapi.io/data/v1/', RequestOptions::HEADERS => ['app-id' => '617b11efbdaa719034cf6d83']]));
 
     try {
-        var_dump($client->getComments(GET_USERS));
+        echo '<p>Get Comments Test</p>';
+        var_dump($client->getComments('user'));
+
         echo '<p>Update Comment</p>';
+        var_dump($client->updateComment('60d0fe4f5311236168a109ca', ['firstName' => 'qwest'], 'user/'));
 
-        var_dump($client->updateComment('60d0fe4f5311236168a109ca', ['firstName' => 'qwest'], PUT_USER));
         echo '<p>Add Comment</p>';
+        $params = array(
+            'message' => 'qwest',
+            'owner' => '60d0fe4f5311236168a109d0',
+            'post' => '60d21b7967d0d8992e610d1b'
+        );
 
-        var_dump($client->addComment($params, POST_COMMENT));
+        var_dump($client->addComment($params, 'comment/create'));
+
     } catch (ClientExceptionInterface $e) {
         var_dump($e->getMessage());
     }
