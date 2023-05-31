@@ -41,6 +41,13 @@
         var_dump($e->getMessage());
     }
 
+    echo '<p>Update Comment</p>';
+    try {
+        var_dump($client->updateComment('60d0fe4f5311236168a109ca', ['firstName' => 'qwest'], PUT_USER));
+    } catch (ClientExceptionInterface $e) {
+        var_dump($e->getMessage());
+    }
+
     echo '<p>Add Comment</p>';
 
     $params = array(
@@ -51,13 +58,6 @@
 
     try {
         var_dump($client->addComment($params, POST_COMMENT));
-    } catch (ClientExceptionInterface $e) {
-        var_dump($e->getMessage());
-    }
-
-    echo '<p>Update Comment</p>';
-    try {
-        var_dump($client->updateComment('60d0fe4f5311236168a109ca', ['firstName' => 'qwest'], PUT_USER));
     } catch (ClientExceptionInterface $e) {
         var_dump($e->getMessage());
     }

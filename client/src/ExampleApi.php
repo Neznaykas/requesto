@@ -60,6 +60,7 @@ class ExampleApi
      */
     public function addComment(array $comment, string $url = 'comment')
     {
+        $this->stream->rewind();
         $this->stream->write(json_encode($comment));
 
         $request = $this->requestFactory->createRequest('POST', $url)
@@ -74,8 +75,9 @@ class ExampleApi
     /**
      * @throws ClientExceptionInterface
      */
-    public function updateComment(int $id, array $comment, string $url = 'comment/')
+    public function updateComment(string $id, array $comment, string $url = 'comment/')
     {
+        $this->stream->rewind();
         $this->stream->write(json_encode($comment));
 
         $request = $this->requestFactory->createRequest('PUT', $url . $id)
