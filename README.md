@@ -36,7 +36,7 @@ text - тип string.
 class ExampleService
 {
     public function __construct(
-        private readonly Client\ExampleApi $client ()
+        private readonly Drom\ExampleApi $client
     ) {
     }
     
@@ -45,13 +45,13 @@ class ExampleService
         try {
             /** @var Comment[] */
             $comments = $this->client->getComments();
-        } catch (\ApiException $e) {
+        } catch (\ClientExceptionInterface $e) {
             ...
         }
     } 
 }
 
-$service = new ExampleService(new Client());
+$service = new ExampleService(new ExampleApi(new HttpFactory(), Psr7\Utils::streamFor(''), new Client());
 ```
 
 <p><code>2. Директория recursion - реализация обхода директорий</code></p>
