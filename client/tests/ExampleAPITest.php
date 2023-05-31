@@ -11,6 +11,7 @@ use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
 use Drom\ExampleApi;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class ExampleAPITest extends TestCase
 {
@@ -28,6 +29,9 @@ class ExampleAPITest extends TestCase
         $this->client = new ExampleApi(new HttpFactory(), $stream, $httClient);
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     */
     public function testGetComments()
     {
         $json = [
@@ -43,6 +47,9 @@ class ExampleAPITest extends TestCase
         $this->assertNotEmpty($response);
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     */
     public function testAddComment()
     {
         $comment = [
@@ -63,10 +70,12 @@ class ExampleAPITest extends TestCase
 
         $response = $this->client->addComment($comment);
 
-        //$this->assertEquals(200, $response->getStatusCode());
         $this->assertArrayHasKey('id', $response['data'][0]);
     }
 
+    /**
+     * @throws ClientExceptionInterface
+     */
     public function testUpdateComment()
     {
         $comment = ['id' => 1, 'name' => 'test', 'text' => 'test'];
@@ -87,29 +96,6 @@ class ExampleAPITest extends TestCase
         $this->assertArrayHasKey('text', $response['data']);
 
         $this->assertEquals('Dromer', $response['data']['name']);
-    }
-
-    public function testAddCommentWithConfirmation()
-    {
-        $comment = [
-            'name' => 'Jane',
-            'email' => 'jane@example.com',
-            'body' => 'This is a test comment'
-        ];
-
-        $json = [
-            'status' => 'success',
-            'data' => [
-                ['id' => 1, 'name' => 'test', 'text' => 'test'],
-                ['id' => 2, 'name' => 'test', 'text' => 'test'],
-            ]
-        ];
-
-        $this->mockHandler->append(new Response(200, [], json_encode($json)));
-
-        $response = $this->client->addCommentWithConfirmation($comment);
-
-        $this->assertNotEquals($json, $response);
     }
 
 }

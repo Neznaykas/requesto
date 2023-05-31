@@ -36,7 +36,7 @@ text - тип string.
 class ExampleService
 {
     public function __construct(
-        private readonly Client\CommentsClientInterface $client
+        private readonly Client\ExampleApi $client ()
     ) {
     }
     
@@ -44,14 +44,12 @@ class ExampleService
     {
         try {
             /** @var Comment[] */
-            $comments = $this->client->get();
+            $comments = $this->client->getComments();
         } catch (\ApiException $e) {
             ...
         }
     } 
 }
-
-$client = new ExampleClient(newGuzzlehttp, new Config());
 
 $service = new ExampleService(new Client());
 ```

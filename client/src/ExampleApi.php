@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
@@ -31,14 +32,10 @@ class ExampleApi
     }
 
     /**
-     * @throws ClientExceptionInterface
-     * @throws ApiException
+     * @throws ApiException|ClientExceptionInterface
      */
-    public function get(string $url): ResponseInterface
+    public function make(RequestInterface $request): ResponseInterface
     {
-        $request = $this->requestFactory->createRequest('GET', $url)
-            ->withHeader('Content-Type', 'application/json');
-
         $this->handleResponse(
             $response = $this->httpClient->sendRequest($request)
         );
@@ -48,95 +45,55 @@ class ExampleApi
 
     /**
      * @throws ClientExceptionInterface
-     * @throws ApiException
      */
-    public function post(string $url, array $data): ResponseInterface
+    public function getComments(string $url = 'comments ')
     {
-        $this->stream->write(json_encode($data));
+        $request = $this->requestFactory->createRequest('GET', $url)
+            ->withHeader('Content-Type', 'application/json');
+
+        $response = $this->make($request);
+        return json_decode($response->getBody(), true);
+    }
+
+    /**
+     * @throws ClientExceptionInterface
+     */
+    public function addComment(array $comment, string $url = 'comment')
+    {
+        $this->stream->write(json_encode($comment));
 
         $request = $this->requestFactory->createRequest('POST', $url)
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->stream);
 
+        $response = $this->make($request);
 
-        $this->handleResponse(
-            $response = $this->httpClient->sendRequest($request)
-        );
-
-        return $response;
+        return json_decode($response->getBody(), true);
     }
 
     /**
-     * @throws ApiException
      * @throws ClientExceptionInterface
      */
-    public function put(string $url, array $data): ResponseInterface
+    public function updateComment(int $id, array $comment, string $url = 'comment/')
     {
-        $this->stream->write(json_encode($data));
+        $this->stream->write(json_encode($comment));
 
-        $request = $this->requestFactory->createRequest('PUT', $url)
+        $request = $this->requestFactory->createRequest('PUT', $url . $id)
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->stream);
 
-        $this->handleResponse(
-            $response = $this->httpClient->sendRequest($request)
-        );
+        $response = $this->make($request);
 
-        return $response;
-    }
-
-    /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     */
-    public function getComments()
-    {
-        $response = $this->get('/comments');
         return json_decode($response->getBody(), true);
     }
 
     /**
-     * @throws ApiException
      * @throws ClientExceptionInterface
-     */
-    public function addComment($comment)
-    {
-        $response = $this->post('/comment', $comment);
-        return json_decode($response->getBody(), true);
-    }
-
-    /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     */
-    public function updateComment($id, $comment)
-    {
-        $response = $this->put('/comment/'.$id, $comment);
-        return json_decode($response->getBody(), true);
-    }
-
-    /**
-     * @throws ApiException
-     * @throws ClientExceptionInterface
-     */
-    public function addCommentWithConfirmation($comment)
-    {
-        $response = $this->post('/comment', $comment);
-        $statusCode = $response->getStatusCode();
-        if ($statusCode === 201) {
-            return json_decode($response->getBody(), true);
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * @throws ApiException
      */
     private function handleResponse(ResponseInterface $response): void
     {
         if ($response->getStatusCode() !== 200) {
-            throw new ApiException("Response status code is not 200 OK", $response);
+            throw new ApiException("Response status code {$response->getStatusCode()}", $response);
         }
 
         try {
@@ -145,9 +102,9 @@ class ExampleApi
             throw new ApiException("Invalid json schema.", $response);
         }
 
-        if ($json['status'] === 'failed') {
+        /*if ($json['status'] === 'failed') {
             throw new ApiException("Response status is failed.", $response);
-        }
+        }*/
 
     }
 }
