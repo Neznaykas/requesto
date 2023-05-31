@@ -7,8 +7,8 @@
 <div class="container">
     <h4>Summer Result</h4>
     <?php
-        require_once __DIR__ . '/recursion/summer.php';
-        echo 'Сумма найденных значений: ' . findAndSum(__DIR__ . '/recursion/dirs');
+    require_once __DIR__ . '/recursion/summer.php';
+    echo 'Сумма найденных значений: ' . findAndSum(__DIR__ . '/recursion/dirs');
     ?>
 
     <h4>Client Example</h4>
@@ -30,6 +30,12 @@
     const GET_USERS = 'user';
     const PUT_USER = 'user/';
 
+    $params = array(
+        'message' => 'qwest',
+        'owner' => '60d0fe4f5311236168a109d0',
+        'post' => '60d21b7967d0d8992e610d1b'
+    );
+
     $client = new ExampleApi(new HttpFactory(), Psr7\Utils::streamFor(''),
         new Client(['base_uri' => BASE_URL, RequestOptions::HEADERS => ['app-id' => APP_ID_VALUE]]));
 
@@ -37,26 +43,11 @@
 
     try {
         var_dump($client->getComments(GET_USERS));
-    } catch (ClientExceptionInterface $e) {
-        var_dump($e->getMessage());
-    }
+        echo '<p>Update Comment</p>';
 
-    echo '<p>Update Comment</p>';
-    try {
         var_dump($client->updateComment('60d0fe4f5311236168a109ca', ['firstName' => 'qwest'], PUT_USER));
-    } catch (ClientExceptionInterface $e) {
-        var_dump($e->getMessage());
-    }
+        echo '<p>Add Comment</p>';
 
-    echo '<p>Add Comment</p>';
-
-    $params = array(
-        'message' => 'qwest',
-        'owner' => '60d0fe4f5311236168a109d0',
-        'post' => '60d21b7967d0d8992e610d1b'
-    );
-
-    try {
         var_dump($client->addComment($params, POST_COMMENT));
     } catch (ClientExceptionInterface $e) {
         var_dump($e->getMessage());
