@@ -113,7 +113,7 @@ class ExampleApiTest extends TestCase
         return [
             [
                 function (): void {
-                    $this->mockHandler->append(new Response(500));
+                    $this->mockHandler->append(new Response(418));
                     $this->client->getComments();
                 }
             ],
