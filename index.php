@@ -11,7 +11,7 @@
     echo 'Сумма найденных значений: ' . findAndSum(__DIR__ . '/recursion/dirs');
     ?>
 
-    <h4>Client Example</h4>
+    <h4>Dummyapi Example</h4>
 
     <?php
 

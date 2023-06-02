@@ -11,26 +11,12 @@ RUN composer clear-cache
 
 # Финальный этап
 FROM php:8.1.5-fpm-alpine as final
-LABEL maintainer="Sergey Snopko <sergey.snopko@gmail.com>"
 
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache --update \
-    curl \
-    icu \
-    bzip2 \
-    bzip2-dev \
-    libzip-dev \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    oniguruma-dev
-    #\ rsync
+    curl
 
 WORKDIR /var/www/html
 
 COPY --from=build /client /var/www/html/client
-#COPY --from=build /client/vendor /var/www/cache/vendor/
-
-RUN chown -R www-data:www-data /var/www/html
-#RUN chmod +x client/entrypoint.sh

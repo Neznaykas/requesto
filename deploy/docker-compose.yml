@@ -17,11 +17,6 @@ services:
             - ../:/var/www/html/
         ports:
             - "80:80"
-#    composer:
-#        image: composer/composer:latest
-#        volumes:
-#            - ../client:/var/www/html/client
-#        command: install --prefer-dist --no-interaction
     php:
         build:
             context: ..
@@ -34,18 +29,9 @@ services:
             - ../client/tests:/var/www/html/client/tests
             - ../recursion:/var/www/html/recursion
             - ../index.php:/var/www/html/index.php
-       #entrypoint: sh /var/www/html/client/entrypoint.sh
         networks:
             - backend
         tty: true
-
-#volumes:
-#    client:
-#        driver: local
-#        driver_opts:
-#            type: 'none'
-#            o: 'bind'
-#            device: '../client'
 
 networks:
     backend:

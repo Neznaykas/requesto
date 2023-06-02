@@ -18,16 +18,11 @@ class ExampleApi
     public function __construct(
         RequestFactoryInterface $requestFactory,
         StreamInterface $stream,
-        ?ClientInterface $httpClient
+        ClientInterface $httpClient
     ) {
         $this->requestFactory = $requestFactory;
         $this->stream = $stream;
-
-        $config = [
-            'base_uri' => 'https://example.com',
-        ];
-
-        $this->httpClient = $httpClient ?? new $httpClient($config);
+        $this->httpClient = $httpClient;
     }
 
     /**
@@ -93,6 +88,9 @@ class ExampleApi
      */
     private function handleResponse(ResponseInterface $response): void
     {
+        if ($response->getStatusCode() === 418)
+            throw new ApiException("Sorry, It's teapot", $response);
+
         if ($response->getStatusCode() !== 200) {
             throw new ApiException("Response status code {$response->getStatusCode()}", $response);
         }
