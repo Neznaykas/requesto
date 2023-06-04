@@ -6,9 +6,8 @@
 <p></p>
 <p>2. Open <a href="http://localhost ">localhost</a> in browser</p>
 
-<p>3. Run Dev Tests</p>
-<p><code>docker run --rm -t app php ./client/vendor/bin/phpunit</code></p>
-<p><code> docker compose exec php ./client/vendor/bin/phpunit client/tests</code></p>
+#### Dev Tests
+<p><code>docker run --rm -t app php ./client/vendor/bin/phpunit client/tests</code></p>
 
 ## Структура проекта
 
@@ -29,7 +28,7 @@ text - тип string.
 Написать phpunit тесты, на которых будет проверяться работоспособность клиента.
 Сервер example.com писать не надо! Только библиотеку для работы с ним.
 
-## Пример
+### Пример
 
 ```php
 
