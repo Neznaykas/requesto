@@ -2,13 +2,9 @@
 
 function findAndSum(string $dir): float|int
 {
-    try {
-        $files = scandir($dir);
-    } catch (\Exception) {
-        return 0;
-    }
-
+    $files = scandir($dir) ?? [];
     $total = 0;
+
     foreach ($files as $file) {
         if ($file === '.' || $file === '..') {
             continue;
@@ -41,11 +37,7 @@ function findAndSum(string $dir): float|int
     return $total;
 }
 
-if (PHP_SAPI == "cli") {
-    $options = getopt("d");
-
-    if (isset($options['d']))
-        echo findAndSum($options['d']);
-    else
-        echo 'set param d - directory';
+if (php_sapi_name() === 'cli') {
+    $dir = $argv[1] ?? null;
+    echo ($dir && is_dir($dir)) ? findAndSum($dir) : 'please, set directory';
 }
