@@ -2,18 +2,43 @@
 
 function findAndSum(string $dir): float|int
 {
-    $sum = 0;
-    $directory = new RecursiveDirectoryIterator($dir);
+    try {
+        $files = scandir($dir);
+    } catch (\Exception) {
+        return 0;
+    }
 
-    foreach (new RecursiveIteratorIterator($directory) as $fileInfo) {
-        if ($fileInfo->isFile() && str_contains($fileInfo->getFilename(), 'count')) {
-            $lines = file($fileInfo->getPathname(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-            $numbers = array_filter($lines, fn($line) => is_numeric($line));
-            $sum += array_sum($numbers);
+    $total = 0;
+    foreach ($files as $file) {
+        if ($file === '.' || $file === '..') {
+            continue;
+        }
+
+        $path = $dir . DIRECTORY_SEPARATOR . $file;
+        if (is_dir($path)) {
+            $total += findAndSum($path);
+        } elseif (is_file($path) && str_contains($file, 'count')) {
+            try {
+                $handle = fopen($path, 'r');
+                if (!$handle) {
+                    throw new \Exception('Cannot open file');
+                }
+
+                while (!feof($handle)) {
+                    $buffer = fread($handle, 4096);
+                    $matches = [];
+                    preg_match_all('/[-+]?\d+(\.\d+)?/', $buffer, $matches);
+                    $total += array_sum($matches[0]);
+                }
+
+                fclose($handle);
+            } catch (\Exception) {
+                continue;
+            }
         }
     }
 
-    return $sum;
+    return $total;
 }
 
 if (PHP_SAPI == "cli") {

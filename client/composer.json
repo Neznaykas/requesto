@@ -33,6 +33,7 @@
         "friendsofphp/php-cs-fixer": "^3.13"
     },
     "scripts": {
-        "test": "phpunit tests --colors=always"
+        "test": "vendor/bin/phpunit tests --colors=always",
+        "php-cs-fixer": "vendor/bin/php-cs-fixer"
     }
 }
