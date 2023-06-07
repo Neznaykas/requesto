@@ -50,7 +50,7 @@ class ExampleService
     } 
 }
 
-$service = new ExampleService(new ExampleApi(new HttpFactory(), Psr7\Utils::streamFor(''), new Client());
+$service = new ExampleService(new ExampleApi(new HttpFactory(), new StreamFactory(), new Client());
 ```
 
 <p><code>2. Директория recursion - реализация обхода директорий</code></p>
