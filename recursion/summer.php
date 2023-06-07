@@ -20,10 +20,9 @@ function findAndSum(string $dir): float|int
                     throw new \Exception('Cannot open file');
                 }
 
-                while (!feof($handle)) {
-                    $buffer = fread($handle, 4096);
+                while (($line = fgets($handle)) !== false) {
                     $matches = [];
-                    preg_match_all('/[-+]?\d+(\.\d+)?/', $buffer, $matches);
+                    preg_match_all('/[-+]?\d+(\.\d+)?/', $line, $matches);
                     $total += array_sum($matches[0]);
                 }
 
