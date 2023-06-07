@@ -7,13 +7,13 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\HttpFactory;
-use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
 use Drom\ExampleApi;
 use Psr\Http\Client\ClientExceptionInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
+use Laminas\Diactoros\StreamFactory;
 
 class ExampleApiTest extends TestCase
 {
@@ -25,10 +25,8 @@ class ExampleApiTest extends TestCase
         $this->mockHandler = new MockHandler();
         $handlerStack = HandlerStack::create($this->mockHandler);
 
-        $stream = Psr7\Utils::streamFor('');
         $httClient = new Client(['handler' => $handlerStack, RequestOptions::HTTP_ERRORS => false]);
-
-        $this->client = new ExampleApi(new HttpFactory(), $stream, $httClient);
+        $this->client = new ExampleApi(new HttpFactory(), new StreamFactory(), $httClient);
     }
 
     /**
@@ -69,9 +67,7 @@ class ExampleApiTest extends TestCase
         ];
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
-
         $response = $this->client->addComment($comment);
-
         $this->assertArrayHasKey('id', $response['data'][0]);
     }
 
@@ -89,15 +85,14 @@ class ExampleApiTest extends TestCase
         ];
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
-
         $response = $this->client->updateComment(1, $comment);
 
         $this->assertNotEmpty($response);
 
-        $this->assertArrayHasKey('name', $response['data']);
-        $this->assertArrayHasKey('text', $response['data']);
+        self::assertArrayHasKey('name', $response['data']);
+        self::assertArrayHasKey('text', $response['data']);
 
-        $this->assertEquals('Dromer', $response['data']['name']);
+        self::assertEquals('Dromer', $response['data']['name']);
     }
 
     #[DataProvider('responsesForTriggerException')]
@@ -111,6 +106,12 @@ class ExampleApiTest extends TestCase
     public static function responsesForTriggerException(): array
     {
         return [
+            [
+                function (): void {
+                    $this->mockHandler->append(new Response(418));
+                    $this->client->getComments();
+                }
+            ],
             [
                 function (): void {
                     $this->mockHandler->append(new Response(418));

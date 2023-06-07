@@ -7,17 +7,17 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 
 class ExampleApi
 {
     private RequestFactoryInterface $requestFactory;
-    private StreamInterface $stream;
+    private StreamFactoryInterface $stream;
     private ClientInterface $httpClient;
 
     public function __construct(
         RequestFactoryInterface $requestFactory,
-        StreamInterface $stream,
+        StreamFactoryInterface $stream,
         ClientInterface $httpClient
     ) {
         $this->requestFactory = $requestFactory;
@@ -28,9 +28,9 @@ class ExampleApi
     /**
      * @throws ApiException|ClientExceptionInterface
      */
-    public function make(RequestInterface $request): ResponseInterface
+    public function executeRequest(RequestInterface $request): ResponseInterface
     {
-         $this->handleResponse(
+         $this->validateResponse(
             $response = $this->httpClient->sendRequest($request)
         );
 
@@ -38,55 +38,49 @@ class ExampleApi
     }
 
     /**
-     * @throws ClientExceptionInterface
+     * @throws ApiException|ClientExceptionInterface
      */
     public function getComments(string $url = 'comments ')
     {
         $request = $this->requestFactory->createRequest('GET', $url)
             ->withHeader('Content-Type', 'application/json');
 
-        $response = $this->make($request);
+        $response = $this->executeRequest($request);
         return json_decode($response->getBody(), true);
     }
 
     /**
-     * @throws ClientExceptionInterface
+     * @throws ApiException|ClientExceptionInterface
      */
     public function addComment(array $comment, string $url = 'comment')
     {
-        $this->stream->rewind();
-        $this->stream->write(json_encode($comment));
-
         $request = $this->requestFactory->createRequest('POST', $url)
             ->withHeader('Content-Type', 'application/json')
-            ->withBody($this->stream);
+            ->withBody($this->stream->createStream(json_encode($comment)));
 
-        $response = $this->make($request);
+        $response = $this->executeRequest($request);
 
         return json_decode($response->getBody(), true);
     }
 
     /**
-     * @throws ClientExceptionInterface
+     * @throws ApiException|ClientExceptionInterface
      */
     public function updateComment(string $id, array $comment, string $url = 'comment/')
     {
-        $this->stream->rewind();
-        $this->stream->write(json_encode($comment));
-
         $request = $this->requestFactory->createRequest('PUT', $url . $id)
             ->withHeader('Content-Type', 'application/json')
-            ->withBody($this->stream);
+            ->withBody($this->stream->createStream(json_encode($comment)));
 
-        $response = $this->make($request);
+        $response = $this->executeRequest($request);
 
         return json_decode($response->getBody(), true);
     }
 
     /**
-     * @throws ClientExceptionInterface
+     * @throws ApiException|ClientExceptionInterface
      */
-    private function handleResponse(ResponseInterface $response): void
+    private function validateResponse(ResponseInterface $response): void
     {
         if ($response->getStatusCode() === 418)
             throw new ApiException("Sorry, It's teapot", $response);

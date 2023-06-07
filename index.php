@@ -20,11 +20,11 @@
     use Drom\ExampleApi;
     use GuzzleHttp\Client;
     use GuzzleHttp\Psr7\HttpFactory;
-    use GuzzleHttp\Psr7;
     use GuzzleHttp\RequestOptions;
     use Psr\Http\Client\ClientExceptionInterface;
+    use Laminas\Diactoros\StreamFactory;
 
-    $client = new ExampleApi(new HttpFactory(), Psr7\Utils::streamFor(''),
+    $client = new ExampleApi(new HttpFactory(), new StreamFactory(),
         new Client(['base_uri' => 'https://dummyapi.io/data/v1/', RequestOptions::HEADERS => ['app-id' => '617b11efbdaa719034cf6d83']]));
 
     try {
