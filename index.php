@@ -29,10 +29,10 @@
 
     try {
         echo '<p>Get Comments Test</p>';
-        var_dump($client->getComments('user'));
+        echo json_encode($client->getComments('user'));
 
         echo '<p>Update Comment</p>';
-        var_dump($client->updateComment('60d0fe4f5311236168a109ca', ['firstName' => 'qwest'], 'user/'));
+        echo json_encode($client->updateComment('60d0fe4f5311236168a109ca', ['firstName' => 'qwest'], 'user/'));
 
         echo '<p>Add Comment</p>';
         $params = array(
@@ -41,7 +41,7 @@
             'post' => '60d21b7967d0d8992e610d1b'
         );
 
-        var_dump($client->addComment($params, 'comment/create'));
+        echo json_encode($client->addComment($params, 'comment/create'));
 
     } catch (ClientExceptionInterface $e) {
         var_dump($e->getMessage());

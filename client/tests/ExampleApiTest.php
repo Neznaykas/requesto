@@ -34,17 +34,22 @@ class ExampleApiTest extends TestCase
      */
     public function testGetComments()
     {
-        $json = [
+        $expected = [
             'status' => 'success',
-            'data' => [
-                ['id' => 1, 'name' => 'test', 'text' => 'test'],
-                ['id' => 2, 'name' => 'test', 'text' => 'test'],
-            ]
+            'data' => [['id' => 1, 'name' => 'test', 'text' => 'test'],
+                      ['id' => 2, 'name' => 'test', 'text' => 'test']],
         ];
 
-        $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $response = $this->client->getComments();
-        self::assertNotEmpty($response);
+        $this->mockHandler->append(new Response(200, [], json_encode($expected)));
+        $comments = $this->client->getComments();
+
+        self::assertEquals($expected['data'][0]['id'], $comments[0]->getId());
+        self::assertEquals($expected['data'][0]['text'], $comments[0]->getText());
+        self::assertEquals($expected['data'][0]['name'], $comments[0]->getName());
+
+        self::assertEquals($expected['data'][1]['id'], $comments[1]->getId());
+        self::assertEquals($expected['data'][1]['text'], $comments[1]->getText());
+        self::assertEquals($expected['data'][1]['name'], $comments[1]->getName());
     }
 
     /**
@@ -52,23 +57,20 @@ class ExampleApiTest extends TestCase
      */
     public function testAddComment()
     {
-        $comment = [
-            'name' => 'John',
-            'email' => 'john@example.com',
-            'body' => 'This is a test comment'
-        ];
+        $expected = ['id' => 1, 'name' => 'test', 'text' => 'test'];
+        $attributes = ['name' => 'test', 'text' => 'test'];
 
         $json = [
             'status' => 'success',
-            'data' => [
-                ['id' => 1, 'name' => 'test', 'text' => 'test'],
-                ['id' => 2, 'name' => 'test', 'text' => 'test'],
-            ]
+            'data' => $expected
         ];
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $response = $this->client->addComment($comment);
-        self::assertArrayHasKey('id', $response['data'][0]);
+        $comment = $this->client->addComment($attributes);
+
+        self::assertEquals($expected['id'], $comment->getId());
+        self::assertEquals($expected['text'], $comment->getText());
+        self::assertEquals($expected['name'], $comment->getName());
     }
 
     /**
@@ -85,14 +87,11 @@ class ExampleApiTest extends TestCase
         ];
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $response = $this->client->updateComment(1, $comment);
+        $updatedComment = $this->client->updateComment(1, $comment);
 
-        self::assertNotEmpty($response);
-
-        self::assertArrayHasKey('name', $response['data']);
-        self::assertArrayHasKey('text', $response['data']);
-
-        self::assertEquals('Dromer', $response['data']['name']);
+        self::assertNotEmpty($updatedComment);
+        self::assertEquals('Dromer', $updatedComment->getName());
+        self::assertEquals('test_1', $updatedComment->getText());
     }
 
     #[DataProvider('responsesForTriggerException')]
@@ -114,7 +113,7 @@ class ExampleApiTest extends TestCase
             ],
             [
                 function (): void {
-                    $this->mockHandler->append(new Response(418));
+                    $this->mockHandler->append(new Response(500));
                     $this->client->getComments();
                 }
             ],

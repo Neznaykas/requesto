@@ -5,7 +5,6 @@ namespace Drom;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
@@ -27,64 +26,77 @@ class ExampleApi
 
     /**
      * @throws ApiException|ClientExceptionInterface
+     * @return Comment[]
      */
-    private function executeRequest(RequestInterface $request): ResponseInterface
-    {
-         $this->validateResponse(
-            $response = $this->httpClient->sendRequest($request)
-        );
-
-        return $response;
-    }
-
-    /**
-     * @throws ApiException|ClientExceptionInterface
-     */
-    public function getComments(string $url = 'comments ')
+    public function getComments(string $url = 'comments '): array
     {
         $request = $this->requestFactory->createRequest('GET', $url)
             ->withHeader('Content-Type', 'application/json');
 
-        $response = $this->executeRequest($request);
-        return json_decode($response->getBody(), true);
+        $comments = $this->handleResponse(
+            $this->httpClient->sendRequest($request)
+        );
+
+        return array_map(static function ($commentData) {
+            if (isset($commentData['id'], $commentData['name'], $commentData['text'])) {
+                return new Comment(
+                    $commentData['id'],
+                    $commentData['name'],
+                    $commentData['text']
+                );
+            }
+            return $commentData;
+        }, $comments);
     }
 
     /**
-     * @throws ApiException|ClientExceptionInterface
+     * @param array $comment
+     * @param string $url
+     * @return Comment|array
+     * @throws ApiException
+     * @throws ClientExceptionInterface
      */
-    public function addComment(array $comment, string $url = 'comment')
+    public function addComment(array $comment, string $url = 'comment'): Comment|array
     {
         $request = $this->requestFactory->createRequest('POST', $url)
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->stream->createStream(json_encode($comment)));
 
-        $response = $this->executeRequest($request);
+        $comment = $this->handleResponse(
+            $this->httpClient->sendRequest($request)
+        );
 
-        return json_decode($response->getBody(), true);
+        return isset($comment['id'], $comment['name'], $comment['text'])
+            ? new Comment($comment['id'], $comment['name'], $comment['text']) : $comment;
     }
 
     /**
-     * @throws ApiException|ClientExceptionInterface
+     * @param string $id
+     * @param array $comment
+     * @param string $url
+     * @return Comment|array
+     * @throws ApiException
+     * @throws ClientExceptionInterface
      */
-    public function updateComment(string $id, array $comment, string $url = 'comment/')
+    public function updateComment(string $id, array $comment, string $url = 'comment/'): Comment|array
     {
         $request = $this->requestFactory->createRequest('PUT', $url . $id)
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->stream->createStream(json_encode($comment)));
 
-        $response = $this->executeRequest($request);
+        $comment = $this->handleResponse(
+            $this->httpClient->sendRequest($request)
+        );
 
-        return json_decode($response->getBody(), true);
+        return isset($comment['id'], $comment['name'], $comment['text'])
+        ? new Comment($comment['id'], $comment['name'], $comment['text']) : $comment;
     }
 
     /**
      * @throws ApiException|ClientExceptionInterface
      */
-    private function validateResponse(ResponseInterface $response): void
+    private function handleResponse(ResponseInterface $response): mixed
     {
-        if ($response->getStatusCode() === 418)
-            throw new ApiException("Sorry, It's teapot", $response);
-
         if ($response->getStatusCode() !== 200) {
             throw new ApiException("Response status code {$response->getStatusCode()}", $response);
         }
@@ -100,5 +112,6 @@ class ExampleApi
             throw new ApiException("Invalid json schema.", $response);
         }
 
+        return $json['data'] ?? $json;
     }
 }
