@@ -30,7 +30,7 @@ class ExampleApiTest extends TestCase
     }
 
     /**
-     * @throws ClientExceptionInterface
+     * @throws ApiException|ClientExceptionInterface
      */
     public function testGetComments()
     {
@@ -44,11 +44,11 @@ class ExampleApiTest extends TestCase
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
         $response = $this->client->getComments();
-        $this->assertNotEmpty($response);
+        self::assertNotEmpty($response);
     }
 
     /**
-     * @throws ClientExceptionInterface
+     * @throws ApiException|ClientExceptionInterface
      */
     public function testAddComment()
     {
@@ -68,11 +68,11 @@ class ExampleApiTest extends TestCase
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
         $response = $this->client->addComment($comment);
-        $this->assertArrayHasKey('id', $response['data'][0]);
+        self::assertArrayHasKey('id', $response['data'][0]);
     }
 
     /**
-     * @throws ClientExceptionInterface
+     * @throws ApiException|ClientExceptionInterface
      */
     public function testUpdateComment()
     {
@@ -87,7 +87,7 @@ class ExampleApiTest extends TestCase
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
         $response = $this->client->updateComment(1, $comment);
 
-        $this->assertNotEmpty($response);
+        self::assertNotEmpty($response);
 
         self::assertArrayHasKey('name', $response['data']);
         self::assertArrayHasKey('text', $response['data']);
@@ -98,8 +98,8 @@ class ExampleApiTest extends TestCase
     #[DataProvider('responsesForTriggerException')]
     public function testHandleResponseException(\Closure $closure)
     {
-        $this->expectException(ApiException::class);
-        $this->expectExceptionCode(0);
+        self::expectException(ApiException::class);
+        self::expectExceptionCode(0);
         $closure->call($this);
     }
 
