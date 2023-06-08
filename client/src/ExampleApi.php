@@ -28,7 +28,7 @@ class ExampleApi
     /**
      * @throws ApiException|ClientExceptionInterface
      */
-    public function executeRequest(RequestInterface $request): ResponseInterface
+    private function executeRequest(RequestInterface $request): ResponseInterface
     {
          $this->validateResponse(
             $response = $this->httpClient->sendRequest($request)

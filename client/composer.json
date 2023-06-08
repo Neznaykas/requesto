@@ -1,6 +1,6 @@
 {
     "name": "neznaykas/drom_test",
-    "description": "Test Drom PHP Package",
+    "description": "Example PHP Package",
     "type": "library",
     "autoload": {
         "psr-4": {
@@ -12,12 +12,6 @@
             "Tests\\": "tests/"
         }
     },
-    "authors": [
-        {
-            "name": "sergey.snopko",
-            "email": "sergey.snopko@gmail.com"
-        }
-    ],
     "require": {
         "php": ">=8.1.0",
         "psr/http-client": "^1.0",
