@@ -60,7 +60,7 @@ $service = new ExampleService(new ExampleApi(new HttpFactory(), new StreamFactor
 Нужно пройтись по всем директориям и вернуть сумму всех чисел из файла count (файлов count может быть много)
 
 ```php
-echo 'Сумма значений: ' . findAndSum('/recursion/dirs');
+echo 'Сумма значений: ' . mainFindAndSum('/recursion/dirs');
 ```
 <p><code>3. deploy - конфигурация сборки для docker или k8s</code></p>
 
