@@ -1,6 +1,28 @@
 <?php
 
-function findAndSum(string $dir): float|int
+/* Медленнее, чем обычная рекурсия, но имеет свои плюсы */
+function mainFindAndSum(string $dir): float|int
+{
+    $sum = 0;
+    $directory = new RecursiveDirectoryIterator($dir);
+
+    foreach (new RecursiveIteratorIterator($directory) as $fileInfo) {
+        if ($fileInfo->isFile() && str_contains($fileInfo->getFilename(), 'count')) {
+
+            $lines = file_get_contents($fileInfo->getPathname());
+            preg_match_all('/[-+]?\d+(\.\d+)?/', $lines, $matches, PREG_SET_ORDER);
+
+            $sum += array_sum(array_map(function ($match) {
+                return floatval($match[0]);
+            }, $matches));
+        }
+    }
+
+    return $sum;
+}
+
+/* Больше кода, более сложен, но быстрее */
+function oldStyleFindAndSum(string $dir): float|int
 {
     $files = scandir($dir) ?? [];
     $total = 0;
@@ -12,13 +34,10 @@ function findAndSum(string $dir): float|int
 
         $path = $dir . DIRECTORY_SEPARATOR . $file;
         if (is_dir($path)) {
-            $total += findAndSum($path);
+            $total += oldStyleFindAndSum($path);
         } elseif (is_file($path) && str_contains($file, 'count')) {
             try {
                 $handle = fopen($path, 'r');
-                if (!$handle) {
-                    throw new \Exception('Cannot open file');
-                }
 
                 while (($line = fgets($handle)) !== false) {
                     $matches = [];
@@ -38,5 +57,5 @@ function findAndSum(string $dir): float|int
 
 if (php_sapi_name() === 'cli') {
     $dir = $argv[1] ?? null;
-    echo ($dir && is_dir($dir)) ? findAndSum($dir) : 'please, set directory';
+    echo ($dir && is_dir($dir)) ? mainFindAndSum($dir) : 'please, set directory';
 }
