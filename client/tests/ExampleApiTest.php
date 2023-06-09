@@ -116,16 +116,6 @@ class ExampleApiTest extends TestCase
                     $this->mockHandler->append(new Response(500));
                     $this->client->getComments();
                 }
-            ],
-            [
-                function (): void {
-                    $json = [
-                        'status' => 'failed',
-                        'data' => []
-                    ];
-                    $this->mockHandler->append(new Response(200, [], json_encode($json)));
-                    $this->client->getComments();
-                }
             ]
         ];
     }

@@ -42,7 +42,7 @@
 
     try {
         echo '<p>Get Comments Test</p>';
-        echo json_encode($client->getComments('user'));
+        echo json_encode($client->getComments('comment'));
 
         echo '<p>Update Comment</p>';
         echo json_encode($client->updateComment('60d0fe4f5311236168a109ca', ['firstName' => 'qwest'], 'user/'));

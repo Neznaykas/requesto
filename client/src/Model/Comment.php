@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drom;
+namespace Drom\Model;
 
 final class Comment
 {

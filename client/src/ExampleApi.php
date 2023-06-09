@@ -2,6 +2,7 @@
 
 namespace Drom;
 
+use Drom\Model\Comment;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -103,11 +104,6 @@ class ExampleApi
 
         try {
             $json = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
-            $status = $json['status'] ?? false;
-
-            if ($status === 'failed') {
-                throw new ApiException("Response status failed.", $response);
-            }
         } catch (\JsonException) {
             throw new ApiException("Invalid json schema.", $response);
         }
