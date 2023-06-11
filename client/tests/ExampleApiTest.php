@@ -25,8 +25,8 @@ class ExampleApiTest extends TestCase
         $this->mockHandler = new MockHandler();
         $handlerStack = HandlerStack::create($this->mockHandler);
 
-        $httClient = new Client(['handler' => $handlerStack, RequestOptions::HTTP_ERRORS => false]);
-        $this->client = new ExampleApi(new HttpFactory(), new StreamFactory(), $httClient);
+        $httpClient = new Client(['handler' => $handlerStack, RequestOptions::HTTP_ERRORS => false]);
+        $this->client = new ExampleApi(new HttpFactory(), new StreamFactory(), $httpClient);
     }
 
     /**
