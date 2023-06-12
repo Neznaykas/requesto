@@ -9,7 +9,7 @@ use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamFactoryInterface;
 
-class ExampleApi
+class CommentsClient
 {
     private RequestFactoryInterface $requestFactory;
     private StreamFactoryInterface $stream;
@@ -35,17 +35,9 @@ class ExampleApi
         $request = $this->requestFactory->createRequest('GET', $url)
             ->withHeader('Content-Type', 'application/json');
 
-        $comments = $this->handleResponse(
-            $this->httpClient->sendRequest($request)
-        );
+        $response = $this->httpClient->sendRequest($request);
 
-        return array_map(static function ($commentData) {
-            return new Comment(
-                $commentData->id,
-                $commentData->name,
-                $commentData->text
-            );
-        }, $comments);
+        return $this->validateResponse($response);
     }
 
     /**
@@ -61,11 +53,9 @@ class ExampleApi
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->stream->createStream($comment->toJson()));
 
-        $added = $this->handleResponse(
-            $this->httpClient->sendRequest($request)
-        )[0];
+        $response = $this->httpClient->sendRequest($request);
 
-        return new Comment($added->id, $added->name, $added->text);
+        return $this->validateResponse($response)[0];
     }
 
     /**
@@ -81,22 +71,17 @@ class ExampleApi
             ->withHeader('Content-Type', 'application/json')
             ->withBody($this->stream->createStream($comment->toJson()));
 
-        $updated = $this->handleResponse(
-            $this->httpClient->sendRequest($request)
-        )[0];
+        $response = $this->httpClient->sendRequest($request);
 
-        $comment->setName($updated->name);
-        $comment->setText($updated->text);
-
-        return $comment;
+        return $this->validateResponse($response)[0];
     }
 
     /**
      * @param ResponseInterface $response
-     * @return array
+     * @return Comment[]
      * @throws ApiException
      */
-    private function handleResponse(ResponseInterface $response): array
+    private function validateResponse(ResponseInterface $response): array
     {
         $statusCode = $response->getStatusCode();
         if ($statusCode !== 200) {
@@ -106,19 +91,25 @@ class ExampleApi
         try {
             $body = $response->getBody()->getContents();
             $json = json_decode($body, false, 512, JSON_THROW_ON_ERROR);
-        } catch (\JsonException) {
-            throw new ApiException("Invalid json schema.", $response);
+        } catch (\JsonException $e) {
+            throw new ApiException("Invalid json schema. {$e->getMessage()}", $response);
         }
 
         if (!is_array($json->data) || count($json->data) === 0) {
             throw new ApiException("No data model.", $response);
         }
 
-        $comment = $json->data[0];
-        if (!isset($comment->id, $comment->name, $comment->text)) {
-            throw new ApiException("Invalid client model schema. " . json_encode($comment), $response);
-        }
-
-        return $json->data;
+        return array_map(static function ($commentData) use ($response) {
+            if (isset($commentData->id, $commentData->name, $commentData->text)) {
+                return new Comment(
+                    $commentData->id,
+                    $commentData->name,
+                    $commentData->text
+                );
+            } else {
+                throw new ApiException("Invalid client model schema. " . json_encode($commentData), $response);
+            }
+        }, $json->data);
     }
+
 }

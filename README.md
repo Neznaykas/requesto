@@ -35,7 +35,7 @@ text - тип string.
 class ExampleService
 {
     public function __construct(
-        private readonly Drom\ExampleApi $client
+        private readonly Drom\CommentsClient $client
     ) {
     }
     
@@ -50,7 +50,7 @@ class ExampleService
     } 
 }
 
-$service = new ExampleService(new ExampleApi(new HttpFactory(), new StreamFactory(), new Client());
+$service = new ExampleService(new CommentsClient(new HttpFactory(), new StreamFactory(), new Client());
 ```
 
 <p><code>2. Директория recursion - реализация обхода директорий</code></p>

@@ -11,15 +11,15 @@ use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
-use Drom\ExampleApi;
+use Drom\CommentsClient;
 use Psr\Http\Client\ClientExceptionInterface;
 use Laminas\Diactoros\StreamFactory;
 
 
-class ExampleApiTest extends TestCase
+class CommentsClientTest extends TestCase
 {
     private MockHandler $mockHandler;
-    private ExampleApi $client;
+    private CommentsClient $client;
 
     public function setUp(): void
     {
@@ -27,7 +27,7 @@ class ExampleApiTest extends TestCase
         $handlerStack = HandlerStack::create($this->mockHandler);
 
         $httpClient = new Client(['handler' => $handlerStack, RequestOptions::HTTP_ERRORS => false]);
-        $this->client = new ExampleApi(new HttpFactory(), new StreamFactory(), $httpClient);
+        $this->client = new CommentsClient(new HttpFactory(), new StreamFactory(), $httpClient);
     }
 
     public static function commentDataProvider(): array
@@ -71,9 +71,9 @@ class ExampleApiTest extends TestCase
         $comment = new Comment($commentData['id'], $commentData['name'], $commentData['text']);
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $added = $this->client->addComment($comment);
+        $addedComment = $this->client->addComment($comment);
 
-        self::assertObjectEquals($comment, $added);
+        self::assertObjectEquals($comment, $addedComment);
     }
 
     /**
@@ -90,9 +90,9 @@ class ExampleApiTest extends TestCase
         $comment = new Comment($commentData['id'], $commentData['name'], $commentData['text']);
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $updated = $this->client->updateComment($comment);
+        $updatedComment = $this->client->updateComment($comment);
 
-        self::assertObjectEquals($comment, $updated);
+        self::assertObjectEquals($comment, $updatedComment);
     }
 
     /**

@@ -31,7 +31,7 @@
     <?php
     require_once __DIR__ . '/client/vendor/autoload.php';
 
-    use Drom\ExampleApi;
+    use Drom\CommentsClient;
     use Drom\Model\Comment;
     use GuzzleHttp\Client;
     use GuzzleHttp\Psr7\HttpFactory;
@@ -39,7 +39,7 @@
     use Laminas\Diactoros\StreamFactory;
     use Psr\Http\Client\ClientExceptionInterface;
 
-    $client = new ExampleApi(new HttpFactory(), new StreamFactory(), new Client(['base_uri' => 'https://dummyapi.io/data/v1/', RequestOptions::HEADERS => ['app-id' => '617b11efbdaa719034cf6d83']]));
+    $client = new CommentsClient(new HttpFactory(), new StreamFactory(), new Client(['base_uri' => 'https://dummyapi.io/data/v1/', RequestOptions::HEADERS => ['app-id' => '617b11efbdaa719034cf6d83']]));
 
     try {
         echo '<p>Get Comments Test</p>';
@@ -51,6 +51,7 @@
         echo json_encode($comment);
 
         echo '<p>Update Comment</p>';
+        $comment->setName('tester');
         echo json_encode($client->updateComment($comment, 'user/'));
 
     } catch (ClientExceptionInterface $e) {

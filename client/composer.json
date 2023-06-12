@@ -1,5 +1,5 @@
 {
-    "name": "neznaykas/drom_test",
+    "name": "neznaykas/requesto",
     "description": "Example PHP Package",
     "type": "library",
     "autoload": {
