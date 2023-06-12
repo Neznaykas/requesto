@@ -51,7 +51,6 @@
         echo json_encode($comment);
 
         echo '<p>Update Comment</p>';
-        $comment->setName('tester');
         echo json_encode($client->updateComment($comment, 'user/'));
 
     } catch (ClientExceptionInterface $e) {

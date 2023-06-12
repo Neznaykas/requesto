@@ -98,7 +98,7 @@ class CommentsClientTest extends TestCase
     /**
      * @throws ApiException|ClientExceptionInterface
      */
-    public function testHandleResponseException()
+    public function testValidateResponseException()
     {
         self::expectException(ApiException::class);
         self::expectExceptionCode(0);

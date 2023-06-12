@@ -7,44 +7,59 @@ namespace Drom\Model;
 final class Comment
 {
     public function __construct(
-        private readonly ?int $id,
-        private ?string $name,
-        private ?string $text
-    ) {
+        private readonly ?int    $id,
+        private readonly ?string $name,
+        private readonly ?string $text
+    )
+    {
     }
 
-    public function getId(): int|string|null
+    /**
+     * Get the comment ID.
+     *
+     * @return int|null The comment ID.
+     */
+    public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getName(): string
+    /**
+     * Get the comment name.
+     *
+     * @return string|null The comment name.
+     */
+    public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name): Comment
-    {
-        $this->name = $name;
-        return $this;
-    }
-
-    public function getText(): string
+    /**
+     * Get the comment text.
+     *
+     * @return string|null The comment text.
+     */
+    public function getText(): ?string
     {
         return $this->text;
     }
 
-    public function setText(string $text): Comment
-    {
-        $this->text = $text;
-        return $this;
-    }
-
-    public function equals(self $other): bool
+    /**
+     * Check if the comment is equal to another comment.
+     *
+     * @param Comment $other The other comment to compare.
+     * @return bool True if the comments are equal, false otherwise.
+     */
+    public function equals(Comment $other): bool
     {
         return $this->toJson() === $other->toJson();
     }
 
+    /**
+     * Convert the comment to JSON.
+     *
+     * @return string The JSON representation of the comment.
+     */
     public function toJson(): string
     {
         return json_encode(get_object_vars($this));
