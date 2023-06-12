@@ -110,7 +110,7 @@ class CommentsClientTest extends TestCase
     /**
      * @throws ApiException|ClientExceptionInterface
      */
-    public function testValidateJsonResponseException()
+    public function testValidateModelResponseException()
     {
         self::expectException(ApiException::class);
         self::expectExceptionMessageMatches('/Invalid client model schema/');
