@@ -40,14 +40,9 @@ final class Comment
         return $this;
     }
 
-    public function asString(): string
-    {
-        return $this->id . $this->name . $this->text;
-    }
-
     public function equals(self $other): bool
     {
-        return $this->asString() === $other->asString();
+        return $this->toJson() === $other->toJson();
     }
 
     public function toJson(): string
