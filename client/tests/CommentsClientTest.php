@@ -106,5 +106,23 @@ class CommentsClientTest extends TestCase
         $this->mockHandler->append(new Response(500));
         $this->client->getComments();
     }
+
+    /**
+     * @throws ApiException|ClientExceptionInterface
+     */
+    public function testValidateJsonResponseException()
+    {
+        self::expectException(ApiException::class);
+        self::expectExceptionMessageMatches('/Invalid client model schema/');
+        self::expectExceptionCode(0);
+
+        $json = [
+            'status' => 'success',
+            'data' => [['id' => 2, 'name12' => 'John', 'texttest_2']]
+        ];
+
+        $this->mockHandler->append(new Response(200, [], json_encode($json)));
+        $this->client->getComments();
+    }
 }
 
