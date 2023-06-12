@@ -17,17 +17,18 @@ class ExampleApi
 
     public function __construct(
         RequestFactoryInterface $requestFactory,
-        StreamFactoryInterface $stream,
-        ClientInterface $httpClient
-    ) {
+        StreamFactoryInterface  $stream,
+        ClientInterface         $httpClient
+    )
+    {
         $this->requestFactory = $requestFactory;
         $this->stream = $stream;
         $this->httpClient = $httpClient;
     }
 
     /**
-     * @throws ApiException|ClientExceptionInterface
      * @return Comment[]
+     * @throws ApiException|ClientExceptionInterface
      */
     public function getComments(string $url = 'comments '): array
     {
@@ -39,75 +40,85 @@ class ExampleApi
         );
 
         return array_map(static function ($commentData) {
-            if (isset($commentData['id'], $commentData['name'], $commentData['text'])) {
-                return new Comment(
-                    $commentData['id'],
-                    $commentData['name'],
-                    $commentData['text']
-                );
-            }
-            return $commentData;
+            return new Comment(
+                $commentData->id,
+                $commentData->name,
+                $commentData->text
+            );
         }, $comments);
     }
 
     /**
-     * @param array $comment
+     * @param Comment $comment
      * @param string $url
-     * @return Comment|array
+     * @return Comment
      * @throws ApiException
      * @throws ClientExceptionInterface
      */
-    public function addComment(array $comment, string $url = 'comment'): Comment|array
+    public function addComment(Comment $comment, string $url = 'comment'): Comment
     {
         $request = $this->requestFactory->createRequest('POST', $url)
             ->withHeader('Content-Type', 'application/json')
-            ->withBody($this->stream->createStream(json_encode($comment)));
+            ->withBody($this->stream->createStream($comment->toJson()));
 
-        $comment = $this->handleResponse(
+        $added = $this->handleResponse(
             $this->httpClient->sendRequest($request)
-        );
+        )[0];
 
-        return isset($comment['id'], $comment['name'], $comment['text'])
-            ? new Comment($comment['id'], $comment['name'], $comment['text']) : $comment;
+        return new Comment($added->id, $added->name, $added->text);
     }
 
     /**
-     * @param string $id
-     * @param array $comment
+     * @param Comment $comment
      * @param string $url
-     * @return Comment|array
+     * @return Comment
      * @throws ApiException
      * @throws ClientExceptionInterface
      */
-    public function updateComment(string $id, array $comment, string $url = 'comment/'): Comment|array
+    public function updateComment(Comment $comment, string $url = 'comment/'): Comment
     {
-        $request = $this->requestFactory->createRequest('PUT', $url . $id)
+        $request = $this->requestFactory->createRequest('PUT', $url . $comment->getId())
             ->withHeader('Content-Type', 'application/json')
-            ->withBody($this->stream->createStream(json_encode($comment)));
+            ->withBody($this->stream->createStream($comment->toJson()));
 
-        $comment = $this->handleResponse(
+        $updated = $this->handleResponse(
             $this->httpClient->sendRequest($request)
-        );
+        )[0];
 
-        return isset($comment['id'], $comment['name'], $comment['text'])
-        ? new Comment($comment['id'], $comment['name'], $comment['text']) : $comment;
+        $comment->setName($updated->name);
+        $comment->setText($updated->text);
+
+        return $comment;
     }
 
     /**
-     * @throws ApiException|ClientExceptionInterface
+     * @param ResponseInterface $response
+     * @return array
+     * @throws ApiException
      */
-    private function handleResponse(ResponseInterface $response): mixed
+    private function handleResponse(ResponseInterface $response): array
     {
-        if ($response->getStatusCode() !== 200) {
-            throw new ApiException("Response status code {$response->getStatusCode()}", $response);
+        $statusCode = $response->getStatusCode();
+        if ($statusCode !== 200) {
+            throw new ApiException("Response status code {$statusCode}", $response);
         }
 
         try {
-            $json = json_decode($response->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+            $body = $response->getBody()->getContents();
+            $json = json_decode($body, false, 512, JSON_THROW_ON_ERROR);
         } catch (\JsonException) {
             throw new ApiException("Invalid json schema.", $response);
         }
 
-        return $json['data'] ?? $json;
+        if (!is_array($json->data) || count($json->data) === 0) {
+            throw new ApiException("No data model.", $response);
+        }
+
+        $comment = $json->data[0];
+        if (!isset($comment->id, $comment->name, $comment->text)) {
+            throw new ApiException("Invalid client model schema. " . json_encode($comment), $response);
+        }
+
+        return $json->data;
     }
 }

@@ -1,3 +1,4 @@
 deploy
 **/.git
 .idea
+client/vendor

@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Drom\ApiException;
+use Drom\Model\Comment;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -12,8 +13,8 @@ use GuzzleHttp\RequestOptions;
 use PHPUnit\Framework\TestCase;
 use Drom\ExampleApi;
 use Psr\Http\Client\ClientExceptionInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Laminas\Diactoros\StreamFactory;
+
 
 class ExampleApiTest extends TestCase
 {
@@ -29,15 +30,23 @@ class ExampleApiTest extends TestCase
         $this->client = new ExampleApi(new HttpFactory(), new StreamFactory(), $httpClient);
     }
 
+    public static function commentDataProvider(): array
+    {
+        return [
+            [['id' => 1, 'name' => 'Dromer', 'text' => 'test_1']],
+            [['id' => 2, 'name' => 'John', 'text' => 'test_2']]
+        ];
+    }
+
     /**
      * @throws ApiException|ClientExceptionInterface
+     * @dataProvider commentDataProvider
      */
-    public function testGetComments()
+    public function testGetComments($commentData)
     {
         $expected = [
             'status' => 'success',
-            'data' => [['id' => 1, 'name' => 'test', 'text' => 'test'],
-                      ['id' => 2, 'name' => 'test', 'text' => 'test']],
+            'data' => [$commentData],
         ];
 
         $this->mockHandler->append(new Response(200, [], json_encode($expected)));
@@ -46,78 +55,56 @@ class ExampleApiTest extends TestCase
         self::assertEquals($expected['data'][0]['id'], $comments[0]->getId());
         self::assertEquals($expected['data'][0]['text'], $comments[0]->getText());
         self::assertEquals($expected['data'][0]['name'], $comments[0]->getName());
+    }
 
-        self::assertEquals($expected['data'][1]['id'], $comments[1]->getId());
-        self::assertEquals($expected['data'][1]['text'], $comments[1]->getText());
-        self::assertEquals($expected['data'][1]['name'], $comments[1]->getName());
+    /**
+     * @throws ApiException|ClientExceptionInterface
+     * @dataProvider commentDataProvider
+     */
+    public function testAddComment($commentData)
+    {
+        $json = [
+            'status' => 'success',
+            'data' => [$commentData]
+        ];
+
+        $comment = new Comment($commentData['id'], $commentData['name'], $commentData['text']);
+
+        $this->mockHandler->append(new Response(200, [], json_encode($json)));
+        $added = $this->client->addComment($comment);
+
+        self::assertObjectEquals($comment, $added);
+    }
+
+    /**
+     * @throws ApiException|ClientExceptionInterface
+     * @dataProvider commentDataProvider
+     */
+    public function testUpdateComment($commentData)
+    {
+        $json = [
+            'status' => 'success',
+            'data' => [$commentData]
+        ];
+
+        $comment = new Comment($commentData['id'], $commentData['name'], $commentData['text']);
+
+        $this->mockHandler->append(new Response(200, [], json_encode($json)));
+        $updated = $this->client->updateComment($comment);
+
+        self::assertObjectEquals($comment, $updated);
     }
 
     /**
      * @throws ApiException|ClientExceptionInterface
      */
-    public function testAddComment()
-    {
-        $expected = ['id' => 1, 'name' => 'test', 'text' => 'test'];
-        $attributes = ['name' => 'test', 'text' => 'test'];
-
-        $json = [
-            'status' => 'success',
-            'data' => $expected
-        ];
-
-        $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $comment = $this->client->addComment($attributes);
-
-        self::assertEquals($expected['id'], $comment->getId());
-        self::assertEquals($expected['text'], $comment->getText());
-        self::assertEquals($expected['name'], $comment->getName());
-    }
-
-    /**
-     * @throws ApiException|ClientExceptionInterface
-     */
-    public function testUpdateComment()
-    {
-        $comment = ['id' => 1, 'name' => 'test', 'text' => 'test'];
-        $attributes = ['name' => 'Dromer', 'text' => 'test_1'];
-
-        $json = [
-            'status' => 'success',
-            'data' => [...$comment, ...$attributes]
-        ];
-
-        $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $updatedComment = $this->client->updateComment(1, $comment);
-
-        self::assertNotEmpty($updatedComment);
-        self::assertEquals('Dromer', $updatedComment->getName());
-        self::assertEquals('test_1', $updatedComment->getText());
-    }
-
-    #[DataProvider('responsesForTriggerException')]
-    public function testHandleResponseException(\Closure $closure)
+    public function testHandleResponseException()
     {
         self::expectException(ApiException::class);
         self::expectExceptionCode(0);
-        $closure->call($this);
-    }
 
-    public static function responsesForTriggerException(): array
-    {
-        return [
-            [
-                function (): void {
-                    $this->mockHandler->append(new Response(418));
-                    $this->client->getComments();
-                }
-            ],
-            [
-                function (): void {
-                    $this->mockHandler->append(new Response(500));
-                    $this->client->getComments();
-                }
-            ]
-        ];
+        $this->mockHandler->append(new Response(500));
+        $this->client->getComments();
     }
 }
 

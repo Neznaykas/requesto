@@ -32,6 +32,7 @@
     require_once __DIR__ . '/client/vendor/autoload.php';
 
     use Drom\ExampleApi;
+    use Drom\Model\Comment;
     use GuzzleHttp\Client;
     use GuzzleHttp\Psr7\HttpFactory;
     use GuzzleHttp\RequestOptions;
@@ -44,13 +45,13 @@
         echo '<p>Get Comments Test</p>';
         echo json_encode($client->getComments('comment'));
 
-        echo '<p>Update Comment</p>';
-        echo json_encode($client->updateComment('60d0fe4f5311236168a109ca', ['firstName' => 'qwest'], 'user/'));
-
         echo '<p>Add Comment</p>';
-        $params = array('message' => 'qwest', 'owner' => '60d0fe4f5311236168a109d0', 'post' => '60d21b7967d0d8992e610d1b');
+        $comment = new Comment(null, 'test', 'test');
+        $comment = $client->addComment($comment, 'comment/create');
+        echo json_encode($comment);
 
-        echo json_encode($client->addComment($params, 'comment/create'));
+        echo '<p>Update Comment</p>';
+        echo json_encode($client->updateComment($comment, 'user/'));
 
     } catch (ClientExceptionInterface $e) {
         var_dump($e->getMessage());
