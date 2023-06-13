@@ -110,6 +110,24 @@ class CommentsClientTest extends TestCase
     /**
      * @throws ApiException|ClientExceptionInterface
      */
+    public function testNoDataResponseException()
+    {
+        self::expectException(ApiException::class);
+        self::expectExceptionMessageMatches('/No data in response/');
+        self::expectExceptionCode(0);
+
+        $json = [
+            'status' => 'success',
+            'data' => []
+        ];
+
+        $this->mockHandler->append(new Response(200, [], json_encode($json)));
+        $this->client->getComments();
+    }
+
+    /**
+     * @throws ApiException|ClientExceptionInterface
+     */
     public function testValidateModelResponseException()
     {
         self::expectException(ApiException::class);

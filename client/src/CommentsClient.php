@@ -96,7 +96,7 @@ class CommentsClient
         }
 
         if (!is_array($json->data) || count($json->data) === 0) {
-            throw new ApiException("No data model.", $response);
+            throw new ApiException("No data in response", $response);
         }
 
         return array_map(static function ($commentData) use ($response) {
