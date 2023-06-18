@@ -52,7 +52,19 @@ final class Comment
      */
     public function equals(Comment $other): bool
     {
-        return $this->toJson() === $other->toJson();
+        if ($this->id !== $other->id) {
+            return false;
+        }
+
+        if ($this->name !== $other->name) {
+            return false;
+        }
+
+        if ($this->text !== $other->text) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

@@ -30,7 +30,7 @@ class CommentsClient
      * @return Comment[]
      * @throws ApiException|ClientExceptionInterface
      */
-    public function getComments(string $url = 'comments '): array
+    public function getComments(string $url): array
     {
         $request = $this->requestFactory->createRequest('GET', $url)
             ->withHeader('Content-Type', 'application/json');
@@ -47,7 +47,7 @@ class CommentsClient
      * @throws ApiException
      * @throws ClientExceptionInterface
      */
-    public function addComment(Comment $comment, string $url = 'comment'): Comment
+    public function addComment(Comment $comment, string $url): Comment
     {
         $request = $this->requestFactory->createRequest('POST', $url)
             ->withHeader('Content-Type', 'application/json')
@@ -65,7 +65,7 @@ class CommentsClient
      * @throws ApiException
      * @throws ClientExceptionInterface
      */
-    public function updateComment(Comment $comment, string $url = 'comment/'): Comment
+    public function updateComment(Comment $comment, string $url): Comment
     {
         $request = $this->requestFactory->createRequest('PUT', $url . $comment->getId())
             ->withHeader('Content-Type', 'application/json')

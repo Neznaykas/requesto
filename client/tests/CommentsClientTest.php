@@ -18,6 +18,10 @@ use Laminas\Diactoros\StreamFactory;
 
 class CommentsClientTest extends TestCase
 {
+    public const GET_COMMENTS = 'comments';
+    public const ADD_COMMENT = 'comment';
+    public const UPDATE_COMMENT = 'comment/';
+
     private MockHandler $mockHandler;
     private CommentsClient $client;
 
@@ -50,7 +54,7 @@ class CommentsClientTest extends TestCase
         ];
 
         $this->mockHandler->append(new Response(200, [], json_encode($expected)));
-        $comments = $this->client->getComments();
+        $comments = $this->client->getComments(self::GET_COMMENTS);
 
         self::assertEquals($expected['data'][0]['id'], $comments[0]->getId());
         self::assertEquals($expected['data'][0]['text'], $comments[0]->getText());
@@ -71,7 +75,7 @@ class CommentsClientTest extends TestCase
         $comment = new Comment($commentData['id'], $commentData['name'], $commentData['text']);
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $addedComment = $this->client->addComment($comment);
+        $addedComment = $this->client->addComment($comment, self::ADD_COMMENT);
 
         self::assertObjectEquals($comment, $addedComment);
     }
@@ -90,7 +94,7 @@ class CommentsClientTest extends TestCase
         $comment = new Comment($commentData['id'], $commentData['name'], $commentData['text']);
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $updatedComment = $this->client->updateComment($comment);
+        $updatedComment = $this->client->updateComment($comment, self::UPDATE_COMMENT);
 
         self::assertObjectEquals($comment, $updatedComment);
     }
@@ -104,7 +108,7 @@ class CommentsClientTest extends TestCase
         self::expectExceptionCode(0);
 
         $this->mockHandler->append(new Response(500));
-        $this->client->getComments();
+        $this->client->getComments(self::GET_COMMENTS);
     }
 
     /**
@@ -122,7 +126,7 @@ class CommentsClientTest extends TestCase
         ];
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $this->client->getComments();
+        $this->client->getComments(self::GET_COMMENTS);
     }
 
     /**
@@ -140,7 +144,7 @@ class CommentsClientTest extends TestCase
         ];
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
-        $this->client->getComments();
+        $this->client->getComments(self::GET_COMMENTS);
     }
 }
 
