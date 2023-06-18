@@ -52,19 +52,9 @@ final class Comment
      */
     public function equals(Comment $other): bool
     {
-        if ($this->id !== $other->id) {
-            return false;
-        }
-
-        if ($this->name !== $other->name) {
-            return false;
-        }
-
-        if ($this->text !== $other->text) {
-            return false;
-        }
-
-        return true;
+        return $this->id === $other->id &&
+            $this->name === $other->name &&
+            $this->text === $other->text;
     }
 
     /**
