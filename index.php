@@ -32,7 +32,7 @@
     require_once __DIR__ . '/client/vendor/autoload.php';
 
     use Drom\CommentsClient;
-    use Drom\Model\Comment;
+    use Drom\Model\CommentDto;
     use GuzzleHttp\Client;
     use GuzzleHttp\Psr7\HttpFactory;
     use GuzzleHttp\RequestOptions;
@@ -46,7 +46,7 @@
         echo json_encode($client->getComments('comment'));
 
         echo '<p>Add Comment</p>';
-        $comment = new Comment(null, 'test', 'test');
+        $comment = new CommentDto(null, 'test', 'test');
         $comment = $client->addComment($comment, 'comment/create');
         echo json_encode($comment);
 

@@ -10,7 +10,7 @@ RUN composer dump-autoload --optimize #--no-dev --classmap-authoritative
 RUN composer clear-cache
 
 # Финальный этап
-FROM php:8.1.5-fpm-alpine as final
+FROM php:8.2-fpm-alpine as final
 
 RUN apk update && \
     apk upgrade && \

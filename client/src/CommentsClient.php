@@ -2,7 +2,7 @@
 
 namespace Drom;
 
-use Drom\Model\Comment;
+use Drom\Model\CommentDto;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -18,22 +18,22 @@ class CommentsClient
     public function __construct(
         RequestFactoryInterface $requestFactory,
         StreamFactoryInterface  $stream,
-        ClientInterface         $httpClient
-    )
-    {
+        ClientInterface         $httpClient,
+    ) {
         $this->requestFactory = $requestFactory;
         $this->stream = $stream;
         $this->httpClient = $httpClient;
     }
 
     /**
-     * @return Comment[]
+     * @return CommentDto[]
      * @throws ApiException|ClientExceptionInterface
      */
     public function getComments(string $url): array
     {
         $request = $this->requestFactory->createRequest('GET', $url)
-            ->withHeader('Content-Type', 'application/json');
+            ->withHeader('Content-Type', 'application/json')
+        ;
 
         $response = $this->httpClient->sendRequest($request);
 
@@ -41,17 +41,15 @@ class CommentsClient
     }
 
     /**
-     * @param Comment $comment
-     * @param string $url
-     * @return Comment
      * @throws ApiException
      * @throws ClientExceptionInterface
      */
-    public function addComment(Comment $comment, string $url): Comment
+    public function addComment(CommentDto $comment, string $url): CommentDto
     {
         $request = $this->requestFactory->createRequest('POST', $url)
             ->withHeader('Content-Type', 'application/json')
-            ->withBody($this->stream->createStream($comment->toJson()));
+            ->withBody($this->stream->createStream($comment->toJson()))
+        ;
 
         $response = $this->httpClient->sendRequest($request);
 
@@ -59,17 +57,15 @@ class CommentsClient
     }
 
     /**
-     * @param Comment $comment
-     * @param string $url
-     * @return Comment
      * @throws ApiException
      * @throws ClientExceptionInterface
      */
-    public function updateComment(Comment $comment, string $url): Comment
+    public function updateComment(CommentDto $comment, string $url): CommentDto
     {
         $request = $this->requestFactory->createRequest('PUT', $url . $comment->getId())
             ->withHeader('Content-Type', 'application/json')
-            ->withBody($this->stream->createStream($comment->toJson()));
+            ->withBody($this->stream->createStream($comment->toJson()))
+        ;
 
         $response = $this->httpClient->sendRequest($request);
 
@@ -77,8 +73,7 @@ class CommentsClient
     }
 
     /**
-     * @param ResponseInterface $response
-     * @return Comment[]
+     * @return CommentDto[]
      * @throws ApiException
      */
     private function validateResponse(ResponseInterface $response): array
@@ -100,16 +95,15 @@ class CommentsClient
         }
 
         return array_map(static function ($commentData) use ($response) {
-            if (isset($commentData->id, $commentData->name, $commentData->text)) {
-                return new Comment(
-                    $commentData->id,
-                    $commentData->name,
-                    $commentData->text
-                );
-            } else {
-                throw new ApiException("Invalid client model schema. " . json_encode($commentData), $response);
+            if (!isset($commentData->id, $commentData->name, $commentData->text)) {
+                throw new ApiException("Invalid comment model schema: " . json_encode($commentData), $response);
             }
+
+            return new CommentDto(
+                $commentData->id,
+                $commentData->name,
+                $commentData->text,
+            );
         }, $json->data);
     }
-
 }

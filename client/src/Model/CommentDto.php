@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace Drom\Model;
 
-final class Comment
+final readonly class CommentDto
 {
     public function __construct(
-        private readonly ?int    $id,
-        private readonly ?string $name,
-        private readonly ?string $text
-    )
-    {
+        private ?int    $id,
+        private ?string $name,
+        private ?string $text,
+    ) {
     }
 
     /**
@@ -47,10 +46,10 @@ final class Comment
     /**
      * Check if the comment is equal to another comment.
      *
-     * @param Comment $other The other comment to compare.
+     * @param CommentDto $other The other comment to compare.
      * @return bool True if the comments are equal, false otherwise.
      */
-    public function equals(Comment $other): bool
+    public function equals(CommentDto $other): bool
     {
         return $this->id === $other->id &&
             $this->name === $other->name &&

@@ -3,18 +3,17 @@
 namespace Tests;
 
 use Drom\ApiException;
-use Drom\Model\Comment;
+use Drom\CommentsClient;
+use Drom\Model\CommentDto;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\HttpFactory;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\RequestOptions;
-use PHPUnit\Framework\TestCase;
-use Drom\CommentsClient;
-use Psr\Http\Client\ClientExceptionInterface;
 use Laminas\Diactoros\StreamFactory;
-
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Client\ClientExceptionInterface;
 
 class CommentsClientTest extends TestCase
 {
@@ -38,7 +37,7 @@ class CommentsClientTest extends TestCase
     {
         return [
             [['id' => 1, 'name' => 'Dromer', 'text' => 'test_1']],
-            [['id' => 2, 'name' => 'John', 'text' => 'test_2']]
+            [['id' => 2, 'name' => 'John', 'text' => 'test_2']],
         ];
     }
 
@@ -46,7 +45,7 @@ class CommentsClientTest extends TestCase
      * @throws ApiException|ClientExceptionInterface
      * @dataProvider commentDataProvider
      */
-    public function testGetComments($commentData)
+    public function testGetComments($commentData): void
     {
         $expected = [
             'status' => 'success',
@@ -65,14 +64,14 @@ class CommentsClientTest extends TestCase
      * @throws ApiException|ClientExceptionInterface
      * @dataProvider commentDataProvider
      */
-    public function testAddComment($commentData)
+    public function testAddComment($commentData): void
     {
         $json = [
             'status' => 'success',
-            'data' => [$commentData]
+            'data' => [$commentData],
         ];
 
-        $comment = new Comment($commentData['id'], $commentData['name'], $commentData['text']);
+        $comment = new CommentDto($commentData['id'], $commentData['name'], $commentData['text']);
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
         $addedComment = $this->client->addComment($comment, self::ADD_COMMENT);
@@ -84,14 +83,14 @@ class CommentsClientTest extends TestCase
      * @throws ApiException|ClientExceptionInterface
      * @dataProvider commentDataProvider
      */
-    public function testUpdateComment($commentData)
+    public function testUpdateComment($commentData): void
     {
         $json = [
             'status' => 'success',
-            'data' => [$commentData]
+            'data' => [$commentData],
         ];
 
-        $comment = new Comment($commentData['id'], $commentData['name'], $commentData['text']);
+        $comment = new CommentDto($commentData['id'], $commentData['name'], $commentData['text']);
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
         $updatedComment = $this->client->updateComment($comment, self::UPDATE_COMMENT);
@@ -102,7 +101,7 @@ class CommentsClientTest extends TestCase
     /**
      * @throws ApiException|ClientExceptionInterface
      */
-    public function testValidateResponseException()
+    public function testValidateResponseException(): void
     {
         self::expectException(ApiException::class);
         self::expectExceptionCode(0);
@@ -114,7 +113,7 @@ class CommentsClientTest extends TestCase
     /**
      * @throws ApiException|ClientExceptionInterface
      */
-    public function testNoDataResponseException()
+    public function testNoDataResponseException(): void
     {
         self::expectException(ApiException::class);
         self::expectExceptionMessageMatches('/No data in response/');
@@ -122,7 +121,7 @@ class CommentsClientTest extends TestCase
 
         $json = [
             'status' => 'success',
-            'data' => []
+            'data' => [],
         ];
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
@@ -132,19 +131,18 @@ class CommentsClientTest extends TestCase
     /**
      * @throws ApiException|ClientExceptionInterface
      */
-    public function testValidateModelResponseException()
+    public function testValidateModelResponseException(): void
     {
         self::expectException(ApiException::class);
-        self::expectExceptionMessageMatches('/Invalid client model schema/');
+        self::expectExceptionMessageMatches('/Invalid comment model schema: /');
         self::expectExceptionCode(0);
 
         $json = [
             'status' => 'success',
-            'data' => [['id' => 2, 'name12' => 'John', 'texttest_2']]
+            'data' => [['id' => 2, 'name12' => 'John', 'texttest_2']],
         ];
 
         $this->mockHandler->append(new Response(200, [], json_encode($json)));
         $this->client->getComments(self::GET_COMMENTS);
     }
 }
-
